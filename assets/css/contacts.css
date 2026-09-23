@@ -932,6 +932,33 @@ button {
     }
 }
 
+/* ── Tablet: keep the right side inside the screen ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .contacts-split-right {
+        flex: 1;
+        min-width: 0;
+        margin-left: 24px;
+    }
+
+    .brand-header {
+        padding-right: 0;
+    }
+
+    .profile-header {
+        flex-wrap: wrap;
+        gap: 16px 24px;
+    }
+
+    .profile-meta {
+        min-width: 0;
+    }
+
+    .profile-name,
+    .info-value {
+        overflow-wrap: anywhere;
+    }
+}
+
 /* ── Laptop (design 1440 × 1024) ── */
 @media (min-width: 1025px) {
     .contacts-main {
@@ -943,7 +970,7 @@ button {
     /* White list panel, 456px wide; only the list inside scrolls */
     .contacts-split-left {
         flex: none;
-        width: 456px;
+        width: clamp(340px, 31.7vw, 456px);
         max-width: none;
         padding: 0;
         overflow: hidden;
@@ -953,7 +980,7 @@ button {
 
     .contacts-list {
         height: 100%;
-        padding: 0 52px 32px;
+        padding: 0 clamp(16px, calc((100% - 352px) / 2), 52px) 32px;
         overflow-y: auto;
         box-sizing: border-box;
         scrollbar-width: thin;
@@ -970,7 +997,8 @@ button {
     }
 
     .btn-add-contact button {
-        width: 352px;
+        width: 100%;
+        max-width: 352px;
         height: 56px;
         margin: 0;
         padding: 12px 16px;
@@ -1033,7 +1061,8 @@ button {
 
     .contact-item {
         align-items: flex-start;
-        width: 352px;
+        width: 100%;
+        max-width: 352px;
         height: 78px;
         margin: 0;
         padding: 15px 24px;
@@ -1107,11 +1136,13 @@ button {
         flex: 1;
         min-width: 0;
         gap: 32px;
-        margin: 14px 0 0 55px;
+        margin: 14px 0 0 clamp(24px, 3.8vw, 55px);
     }
 
+    /* "Better with a team" moves below the title when there is not enough room */
     .brand-header {
-        gap: 30px;
+        flex-wrap: wrap;
+        gap: 8px 30px;
         margin: 0;
     }
 
