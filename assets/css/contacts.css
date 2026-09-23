@@ -554,12 +554,14 @@ button {
         background: #ffffff;
     }
 
+    /* Only .contacts-main scrolls on mobile, the list inside grows with its content */
     .contacts-split-left {
         max-width: none;
         flex: none;
         width: 100%;
-        overflow-y: scroll;
-        overflow-x: hidden;
+        margin-top: 64px;
+        padding-top: 0;
+        overflow: visible;
         background: #ffffff;
         box-shadow: 4px 0px 6px rgba(0, 0, 0, 0.08);
         padding-left: 0;
@@ -619,23 +621,68 @@ button {
     }
 
     .contacts-list {
-        padding: 96px 24px;
+        padding: 24px 24px 96px;
+        overflow: visible;
     }
 
     .letter-group-title {
-        padding: 17px 36px;
+        position: relative;
+        display: flex;
+        align-items: center;
         height: 58px;
-        font-size: 20px;
+        margin: 0 0 16px;
+        padding: 17px 36px;
+        border-bottom: none;
+        box-sizing: border-box;
         color: #000000;
-        margin: 0;
+        font-family: 'Inter', sans-serif;
+        font-size: 20px;
+        font-weight: 400;
+        line-height: 120%;
+    }
+
+    /* Grey separator line below each letter, 8px away from the title */
+    .letter-group-title::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        bottom: -8px;
+        left: 0;
+        border-top: 1px solid #D1D1D1;
+        border-radius: 3px;
     }
 
     .contact-item {
-        padding: 15px 24px;
+        align-items: flex-start;
         height: 78px;
+        margin-bottom: 0;
+        padding: 15px 24px;
         gap: 35px;
         border-radius: 10px;
         background: #ffffff;
+        box-sizing: border-box;
+    }
+
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 0;
+        padding-left: 0;
+    }
+
+    .contact-info .name,
+    .contact-info .email {
+        overflow: hidden;
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        line-height: 120%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .contact-info .email {
+        margin-top: 0;
     }
 
     .profile-placeholder img {
@@ -644,11 +691,14 @@ button {
     }
 
     .avatar {
-        width: 48px;
-        height: 48px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         border: 2px solid #ffffff;
-        font-size: 14px;
+        box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 400;
     }
 
     .big-avatar {
@@ -852,23 +902,16 @@ button {
         margin-top: 64px;
     }
 
+    /* 428px wide: 38px side padding -> 352px wide cards like in the design */
     .contacts-list {
-        padding: 46px 16px;
+        padding: 24px clamp(12px, 9vw, 38px) 96px;
     }
 }
 
 @media (max-width: 425px) {
     .contact-item {
-        gap: 5px;
-        padding: 15px 5px;
-    }
-
-    .avatar {
-        transform: translateX(20px);
-    }
-
-    .contact-info {
-        padding-left: 35px;
+        padding: 15px 16px;
+        gap: 24px;
     }
 
     .profile-placeholder img {
