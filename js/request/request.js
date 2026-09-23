@@ -1,6 +1,79 @@
-const REQUEST_DAILY_LIMIT = 5;
+const REQUEST_DAILY_LIMIT = 10;
 const REQUEST_LIMIT_KEY = 'joinRequestLog';
 let requestAttachments = [];
+
+document.addEventListener('DOMContentLoaded', initRequestPage);
+
+
+/**
+ * Renders the counter and shows the limit screen when today's limit is used up.
+ * @returns {void}
+ */
+function initRequestPage() {
+    renderRequestUsage();
+    if (isRequestLimitReached()) showRequestStep('limit');
+}
+
+
+/**
+ * Checks whether the daily request limit has been reached.
+ * @returns {boolean}
+ */
+function isRequestLimitReached() {
+    return getTodaysRequestCount() >= REQUEST_DAILY_LIMIT;
+}
+
+
+/**
+ * Shows how many requests were already sent today.
+ * @returns {void}
+ */
+function renderRequestUsage() {
+    document.getElementById('request-used').textContent = Math.min(getTodaysRequestCount(), REQUEST_DAILY_LIMIT);
+    document.getElementById('request-limit').textContent = REQUEST_DAILY_LIMIT;
+    document.querySelector('.request-limit-count').textContent = REQUEST_DAILY_LIMIT;
+    document.querySelector('.request-usage').classList.toggle('is-limit', isRequestLimitReached());
+}
+
+
+/**
+ * Shows exactly one of the steps: intro, limit, form or success.
+ * @param {'intro'|'limit'|'form'|'success'} step
+ * @returns {void}
+ */
+function showRequestStep(step) {
+    document.getElementById('request-intro').classList.toggle('d-none', step !== 'intro');
+    document.getElementById('request-limit-reached').classList.toggle('d-none', step !== 'limit');
+    document.getElementById('request-card').classList.toggle('d-none', step !== 'form');
+    document.getElementById('request-success').classList.toggle('d-none', step !== 'success');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+/**
+ * Opens the request form (step 2).
+ * @returns {void}
+ */
+function showRequestForm() {
+    if (isRequestLimitReached()) return showRequestStep('limit');
+    showRequestStep('form');
+    document.getElementById('req-name').focus();
+}
+
+
+/**
+ * Back arrow: returns to the start screen from the form, otherwise to the welcome page.
+ * @returns {void}
+ */
+function goBack() {
+    const onStart = ['request-intro', 'request-limit-reached']
+        .some(id => !document.getElementById(id).classList.contains('d-none'));
+    if (!onStart) {
+        showRequestStep(isRequestLimitReached() ? 'limit' : 'intro');
+    } else {
+        window.location.href = '../index.html';
+    }
+}
 
 
 /**
@@ -60,9 +133,9 @@ function readRequestForm() {
  * @returns {string}
  */
 function validateRequest(values) {
-    if (!values.name || !values.email || !values.title || !values.description) return 'Bitte alle Pflichtfelder ausfüllen.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(values.email)) return 'Bitte eine gültige E-Mail-Adresse eingeben.';
-    if (getTodaysRequestCount() >= REQUEST_DAILY_LIMIT) return `Maximal ${REQUEST_DAILY_LIMIT} Anfragen pro Tag – bitte morgen wieder.`;
+    if (!values.name || !values.email || !values.title || !values.description) return 'Please fill in all required fields.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(values.email)) return 'Please enter a valid email address.';
+    if (getTodaysRequestCount() >= REQUEST_DAILY_LIMIT) return `You have reached the limit of ${REQUEST_DAILY_LIMIT} requests for today – please try again tomorrow.`;
     return '';
 }
 
@@ -166,10 +239,11 @@ async function submitRequest(event) {
     try {
         await saveRequestTask(buildRequestTask(values));
         logRequestSent();
-        toggleRequestSuccess(true);
+        renderRequestUsage();
+        showRequestStep('success');
     } catch (e) {
         console.error('Error sending request:', e);
-        showRequestError('Senden fehlgeschlagen. Bitte später erneut versuchen.');
+        showRequestError('Sending failed. Please try again later.');
     } finally {
         button.disabled = false;
     }
@@ -187,17 +261,6 @@ function showRequestError(message) {
 
 
 /**
- * Switches between the form card and the success card.
- * @param {boolean} success
- * @returns {void}
- */
-function toggleRequestSuccess(success) {
-    document.getElementById('request-card').classList.toggle('d-none', success);
-    document.getElementById('request-success').classList.toggle('d-none', !success);
-}
-
-
-/**
  * Clears the form so another request can be sent.
  * @returns {void}
  */
@@ -206,5 +269,5 @@ function resetRequestForm() {
     requestAttachments = [];
     renderRequestAttachments();
     showRequestError('');
-    toggleRequestSuccess(false);
+    showRequestForm();
 }
