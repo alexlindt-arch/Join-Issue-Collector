@@ -1,4 +1,20 @@
-# Join-groupe
+# Join – Issue Collector
+
+Solo-Version von Join-groupe (Vanilla JS) mit eigener Firebase-Datenbank.
+
+Neue Features
+-------------
+- **Issue Collector** (`html/request.html`): öffentliches Formular ohne Login für Feature Requests und Bug Reports inkl. Screenshots, landet in der Triage-Spalte
+- **Triage-Spalte** im Board mit Zähler und „Accept to To do“
+- **Bild-Anhänge** an Tasks (JPG/PNG, Magic-Byte-Prüfung, Komprimierung auf 800 px, Base64, max. 1 MB pro Task) mit Vorschau und Download
+- **Kontakt-Avatare**: Foto-Upload (200 px, Base64) statt Initialen – kein Firebase Storage / Blaze-Tarif nötig
+
+Konfiguration
+-------------
+Die Datenbank-URL steht zentral in [js/config.js](js/config.js) (`JOIN_DB_URL`).
+
+---
+
 
 Kurzbeschreibung
 -----------------
