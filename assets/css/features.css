@@ -212,6 +212,7 @@
 }
 
 .detail-requester {
+    margin: 0 0 16px;
     font-size: 14px;
 }
 
@@ -243,4 +244,8 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.category-bug-report {
+    background-color: var(--priority-urgent);
 }

@@ -52,6 +52,7 @@ function categoryColorClass(category) {
     if (c.includes('technical')) return 'category-technical';
     if (c.includes('user')) return 'category-user-story';
     if (c.includes('feature')) return 'category-feature-request';
+    if (c.includes('bug')) return 'category-bug-report';
     return '';
 }
 

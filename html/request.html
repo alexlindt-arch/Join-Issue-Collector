@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../assets/icons/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="../assets/icons/favicon/favicon.ico" />
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../assets/css/features.css">
+    <link rel="stylesheet" href="../assets/css/request.css">
+    <title>Join – Issue Collector</title>
+</head>
+
+<body class="request-page">
+    <header class="request-header">
+        <a href="../index.html"><img src="../assets/img/logo_big.svg" alt="Join" class="request-logo"></a>
+        <a href="../index.html" class="btn btn-secondary request-login-link">Log in</a>
+    </header>
+
+    <main class="request-main">
+        <section class="request-card" id="request-card">
+            <h1 class="request-title">Issue Collector</h1>
+            <p class="request-subtitle">Bug gefunden oder eine Idee für ein neues Feature? Schick sie direkt in die
+                Triage des Join-Boards.</p>
+
+            <form class="request-form" id="request-form" novalidate onsubmit="submitRequest(event)">
+                <div class="request-row">
+                    <div class="request-group">
+                        <label for="req-name">Name <span class="required">*</span></label>
+                        <input type="text" id="req-name" class="request-input" placeholder="Dein Name"
+                            autocomplete="name" maxlength="80">
+                    </div>
+                    <div class="request-group">
+                        <label for="req-email">E-Mail <span class="required">*</span></label>
+                        <input type="email" id="req-email" class="request-input" placeholder="name@example.com"
+                            autocomplete="email" maxlength="120">
+                    </div>
+                </div>
+
+                <div class="request-group">
+                    <label>Art</label>
+                    <div class="request-types">
+                        <label class="request-type"><input type="radio" name="req-type" value="Feature Request"
+                                checked> Feature</label>
+                        <label class="request-type"><input type="radio" name="req-type" value="Bug Report"> Bug</label>
+                    </div>
+                </div>
+
+                <div class="request-group">
+                    <label for="req-title">Titel <span class="required">*</span></label>
+                    <input type="text" id="req-title" class="request-input" placeholder="Kurz und knapp"
+                        maxlength="100">
+                </div>
+
+                <div class="request-group">
+                    <label for="req-desc">Beschreibung <span class="required">*</span></label>
+                    <textarea id="req-desc" class="request-input request-textarea"
+                        placeholder="Was soll passieren? Wie lässt sich der Fehler nachstellen?"
+                        maxlength="2000"></textarea>
+                </div>
+
+                <div class="request-group">
+                    <label for="req-attachments">Screenshots</label>
+                    <label class="attachment-drop" for="req-attachments">
+                        <span>&#128206; Bilder hinzufügen</span>
+                        <span class="attachment-hint">JPG/PNG, max. 1 MB gesamt</span>
+                    </label>
+                    <input type="file" id="req-attachments" accept="image/jpeg,image/png" multiple hidden
+                        onchange="handleRequestAttachmentSelect(this)">
+                    <div class="attachment-list" id="req-attachment-list"></div>
+                </div>
+
+                <p class="request-error" id="request-error" aria-live="polite"></p>
+
+                <div class="request-actions">
+                    <span class="request-hint"><span class="required">*</span> Pflichtfeld</span>
+                    <button type="submit" class="btn btn-primary" id="req-submit">Absenden</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="request-card request-success d-none" id="request-success">
+            <h2 class="request-title">Danke! &#127881;</h2>
+            <p class="request-subtitle">Deine Anfrage ist eingegangen und wird in der Triage geprüft.</p>
+            <button type="button" class="btn btn-primary" onclick="resetRequestForm()">Weitere Anfrage</button>
+        </section>
+    </main>
+
+    <footer class="request-footer">
+        <a href="privacy_policy.html">Privacy Policy</a>
+        <a href="legal_notice.html">Legal notice</a>
+    </footer>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/image_utils.js"></script>
+    <script src="../js/request/request.js"></script>
+</body>
+
+</html>
