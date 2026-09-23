@@ -10,7 +10,7 @@ function editTaskTemplate(task) {
         + buildEditPrioField(prioButtons)
         + buildEditAssignField()
         + buildEditSubtaskField()
-        + buildEditAttachmentField()
+        + '</div>'
         + buildEditSaveButton(task.id);
 }
 
@@ -122,25 +122,6 @@ function buildEditSubtaskField() {
         </div>`;
 }
 
-
-/**
- * Returns the attachment upload field and thumbnail list for the edit form.
- * Also closes the edit-box wrapper opened in buildEditBasicFields.
- * @returns {string} HTML string.
- */
-function buildEditAttachmentField() {
-    return `
-        <div class="edit-form-group">
-            <label class="edit-label" for="edit-attachments">Attachments</label>
-            <label class="attachment-drop" for="edit-attachments">
-                <span>&#128206; Add images</span>
-                <span class="attachment-hint">JPG/PNG, max. 1 MB per task</span>
-            </label>
-            <input type="file" id="edit-attachments" accept="image/jpeg,image/png" multiple hidden
-                onchange="handleEditAttachmentSelect(this)">
-            <div class="attachment-list" id="edit-attachment-list"></div>
-        </div></div>`;
-}
 
 
 /**

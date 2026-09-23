@@ -7,7 +7,6 @@ let modalAssignedIds = [];
 let modalSubtasks = [];
 let modalContacts = [];
 let modalDefaultStatus = 'todo';
-let modalAttachments = [];
 
 
 /** Normalized contact list from guest or remote source. 
@@ -343,41 +342,4 @@ function modalSubtaskEditTemplate(subtask, index) {
                 <button type="button" class="subtask-icon-btn" title="Save" onclick="saveModalSubtaskEdit(${index})">&#10003;</button>
             </span>
         </li>`;
-}
-
-
-
-/**
- * Compresses the selected images and adds them to the modal task attachments.
- * @async
- * @param {HTMLInputElement} input - The file input.
- * @returns {Promise<void>}
- */
-async function handleModalAttachmentSelect(input) {
-    const { added, errors } = await filesToAttachments(input.files, modalAttachments);
-    modalAttachments = modalAttachments.concat(added);
-    input.value = '';
-    renderModalAttachments();
-    if (errors.length) showTaskNotification(errors.join(' '), true);
-}
-
-
-/**
- * Removes a modal attachment by index.
- * @param {number} index - Attachment index.
- * @returns {void}
- */
-function removeModalAttachment(index) {
-    modalAttachments.splice(index, 1);
-    renderModalAttachments();
-}
-
-
-/**
- * Renders the attachment thumbnails inside the add-task modal.
- * @returns {void}
- */
-function renderModalAttachments() {
-    const list = document.getElementById('modal-attachment-list');
-    if (list) list.innerHTML = attachmentThumbsHTML(modalAttachments, 'removeModalAttachment');
 }

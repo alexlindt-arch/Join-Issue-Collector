@@ -120,17 +120,6 @@
                         placeholder="What should happen? How can the bug be reproduced?" maxlength="2000"></textarea>
                 </div>
 
-                <div class="request-group">
-                    <label for="req-attachments">Screenshots</label>
-                    <label class="attachment-drop" for="req-attachments">
-                        <span>&#128206; Add images</span>
-                        <span class="attachment-hint">JPG/PNG, max. 1 MB in total</span>
-                    </label>
-                    <input type="file" id="req-attachments" accept="image/jpeg,image/png" multiple hidden
-                        onchange="handleRequestAttachmentSelect(this)">
-                    <div class="attachment-list" id="req-attachment-list"></div>
-                </div>
-
                 <p class="request-error" id="request-error" aria-live="polite"></p>
 
                 <div class="request-actions">
@@ -161,7 +150,6 @@
     </footer>
 
     <script src="../js/config.js"></script>
-    <script src="../js/image_utils.js"></script>
     <script src="../js/request/request.js"></script>
 </body>
 

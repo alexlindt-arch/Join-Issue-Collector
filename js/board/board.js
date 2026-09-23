@@ -6,7 +6,6 @@ let editSelectedPrio = null;
 let editAssignedIds = [];
 let editSubtasks = [];
 let boardContacts = [];
-let editAttachments = [];
 
 
 /**

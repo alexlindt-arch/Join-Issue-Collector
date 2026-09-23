@@ -91,7 +91,6 @@ function taskCardTemplate(task) {
             ${progress}
             <div class="task-card-footer">
                 <div class="task-card-avatars">${avatars}</div>
-                ${(task.attachments || []).length ? `<span class="task-card-attachments" title="Attachments">&#128206; ${task.attachments.length}</span>` : ''}
                 <div class="task-card-prio">${prioSvg(task.priority)}</div>
             </div>
         </div>`;
@@ -203,7 +202,6 @@ function buildDetailHTML(task, prioLabel, assignees, subtaskList) {
         + buildDetailInfo(task, prioLabel)
         + buildDetailAssignSection(task, assignees)
         + buildDetailSubtaskSection(task, subtaskList)
-        + buildDetailAttachmentSection(task)
         + '</div>'
         + buildDetailActions(task);
 }
@@ -301,20 +299,6 @@ function buildDetailActions(task) {
         </div>`;
 }
 
-
-/**
- * Returns the attachments section for the detail view or empty string.
- * @param {Object} task - Task object with optional attachments array.
- * @returns {string} HTML string.
- */
-function buildDetailAttachmentSection(task) {
-    if (!(task.attachments || []).length) return '';
-    return `
-        <div class="detail-section">
-            <span class="detail-label">Attachments</span>
-            <div class="attachment-list">${attachmentThumbsHTML(task.attachments)}</div>
-        </div>`;
-}
 
 
 /**

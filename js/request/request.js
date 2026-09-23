@@ -1,6 +1,5 @@
 const REQUEST_DAILY_LIMIT = 10;
 const REQUEST_LIMIT_KEY = 'joinRequestLog';
-let requestAttachments = [];
 
 document.addEventListener('DOMContentLoaded', initRequestPage);
 
@@ -77,42 +76,6 @@ function goBack() {
 
 
 /**
- * Compresses the selected screenshots and adds them to the request.
- * @async
- * @param {HTMLInputElement} input - The file input.
- * @returns {Promise<void>}
- */
-async function handleRequestAttachmentSelect(input) {
-    const { added, errors } = await filesToAttachments(input.files, requestAttachments);
-    requestAttachments = requestAttachments.concat(added);
-    input.value = '';
-    renderRequestAttachments();
-    showRequestError(errors.join(' '));
-}
-
-
-/**
- * Removes a screenshot from the request by index.
- * @param {number} index
- * @returns {void}
- */
-function removeRequestAttachment(index) {
-    requestAttachments.splice(index, 1);
-    renderRequestAttachments();
-}
-
-
-/**
- * Renders the screenshot thumbnails.
- * @returns {void}
- */
-function renderRequestAttachments() {
-    document.getElementById('req-attachment-list').innerHTML =
-        attachmentThumbsHTML(requestAttachments, 'removeRequestAttachment');
-}
-
-
-/**
  * Reads all form values.
  * @returns {Object} Raw form values.
  */
@@ -184,7 +147,6 @@ function buildRequestTask(values) {
         dueDate: '',
         assignedTo: [],
         subtasks: [],
-        attachments: requestAttachments,
         requester: { name: values.name, email: values.email },
         createdAt: new Date().toISOString()
     };
@@ -266,8 +228,6 @@ function showRequestError(message) {
  */
 function resetRequestForm() {
     document.getElementById('request-form').reset();
-    requestAttachments = [];
-    renderRequestAttachments();
     showRequestError('');
     showRequestForm();
 }

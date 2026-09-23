@@ -22,7 +22,6 @@ function initEditState(task) {
   editSelectedPrio = task.priority || 'medium';
   editSubtasks = (task.subtasks || []).map(s => ({ ...s }));
   editAssignedIds = (task.assignedTo || []).map(a => String(a.id));
-  editAttachments = (task.attachments || []).map(a => ({ ...a }));
 }
 
 
@@ -38,7 +37,6 @@ function renderEditModal(task) {
   renderEditAssignOptions();
   renderEditAssignedAvatars();
   renderEditSubtasks();
-  renderEditAttachments();
   attachEditModalListeners();
 }
 
@@ -303,8 +301,7 @@ function buildTaskUpdates(title, task) {
     dueDate: document.getElementById('edit-due').value,
     priority: editSelectedPrio || task.priority,
     assignedTo: buildAssignedTo(),
-    subtasks: editSubtasks,
-    attachments: editAttachments
+    subtasks: editSubtasks
   };
 }
 
@@ -360,41 +357,4 @@ function resetEditState() {
   editSelectedPrio = null;
   editAssignedIds = [];
   editSubtasks = [];
-  editAttachments = [];
-}
-
-
-/**
- * Compresses the selected images and adds them to the edited task.
- * @async
- * @param {HTMLInputElement} input - The file input.
- * @returns {Promise<void>}
- */
-async function handleEditAttachmentSelect(input) {
-  const { added, errors } = await filesToAttachments(input.files, editAttachments);
-  editAttachments = editAttachments.concat(added);
-  input.value = '';
-  renderEditAttachments();
-  if (errors.length) notify(errors.join(' '), true);
-}
-
-
-/**
- * Removes an attachment from the edited task by index.
- * @param {number} index
- * @returns {void}
- */
-function removeEditAttachment(index) {
-  editAttachments.splice(index, 1);
-  renderEditAttachments();
-}
-
-
-/**
- * Re-renders the attachment thumbnails inside the edit modal.
- * @returns {void}
- */
-function renderEditAttachments() {
-  const list = document.getElementById('edit-attachment-list');
-  if (list) list.innerHTML = attachmentThumbsHTML(editAttachments, 'removeEditAttachment');
 }
