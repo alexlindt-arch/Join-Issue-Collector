@@ -24,12 +24,25 @@
     flex: 1;
     flex-direction: column;
     align-items: center;
-    gap: 56px;
+    gap: 48px;
     width: 100%;
     max-width: 1121px;
     margin: 0 auto;
     padding: 24px 16px 40px;
     box-sizing: border-box;
+}
+
+.request-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 56px;
+    width: 100%;
+}
+
+.request-mobile-only,
+.request-mobile-copy {
+    display: none;
 }
 
 .request-topbar {
@@ -253,69 +266,157 @@
 }
 
 @media (max-width: 600px) {
+    .request-page {
+        background: #F6F7F8;
+    }
+
     .request-header {
-        padding: 16px 16px 0;
+        padding: 37px 19px 0;
+    }
+
+    .request-logo {
+        width: 64px;
     }
 
     .request-main {
-        gap: 32px;
+        gap: 24px;
+        max-width: 428px;
+        padding: 64px 19px 32px;
+    }
+
+    .request-head {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 8px 32px;
+    }
+
+    .request-topbar {
+        display: contents;
     }
 
     .request-title {
+        grid-row: 1;
+        grid-column: 1;
         font-size: 40px;
+        text-align: left;
+    }
+
+    .request-back {
+        grid-row: 1;
+        grid-column: 2;
+        width: 32px;
+        height: 32px;
+    }
+
+    .request-back path {
+        fill: #177DA8;
+    }
+
+    .request-usage {
+        grid-row: 2;
+        grid-column: 1 / -1;
+        font-size: 16px;
+    }
+
+    .request-usage strong {
+        font-size: 19px;
     }
 
     .request-intro {
         gap: 32px;
     }
 
-    .request-intro-text .request-lead {
-        margin-bottom: 8px;
-        font-size: 22px;
+    .request-intro-body {
+        align-items: center;
+        gap: 48px;
     }
 
-    .request-limit-banner {
-        font-size: 17px !important;
+    .request-intro-grid {
+        gap: 24px;
+    }
+
+    .request-intro-text {
+        display: contents;
+    }
+
+    .request-intro-text .request-lead {
+        order: 0;
+        width: 100%;
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        font-size: 22px;
+        font-weight: 500;
+    }
+
+    .request-illustration {
+        order: 1;
+        width: 292px;
+        height: 201px;
+        object-fit: cover;
+    }
+
+    .request-mobile-copy {
+        display: flex;
+        flex-direction: column;
+        order: 2;
+        gap: 8px;
+        width: 100%;
+        color: #42526E;
+    }
+
+    .request-mobile-only {
+        display: inline;
+    }
+
+    .request-desktop-only {
+        display: none;
     }
 
     .request-intro-text p,
-    .request-usage {
+    .request-mobile-copy p {
         font-size: 16px;
     }
 
+    .request-page .request-cta {
+        gap: 10px;
+        min-height: 49px;
+        padding: 15px 24px;
+        border-radius: 8px;
+        background: #2A3647;
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        text-decoration: none;
+    }
+
+    .request-page .request-cta:hover {
+        background: #29ABE2;
+    }
+
+    .request-cta svg {
+        display: none;
+    }
+
     .request-limit-text {
-    gap: 48px;
-}
+        display: flex;
+        order: 0;
+        gap: 32px;
+    }
 
-.request-limit-banner {
-    min-height: 56px;
-    margin: 0;
-    padding: 16px 24px;
-    border-radius: 8px;
-    background: rgba(255, 210, 210, 0.52);
-    box-sizing: border-box;
-}
+    .request-page .request-limit-banner {
+        font-size: 17px;
+    }
 
-.request-page .request-limit-banner {
-    color: var(--primaryColor);
-    font-family: 'Inter', sans-serif;
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 120%;
-    text-align: center;
-}
+    .request-page .request-limit-info {
+        margin-top: -16px;
+    }
 
-.request-page .request-limit-info {
-    margin-top: -24px;
-    color: var(--primaryColor);
-}
+    .request-limit-cta {
+        align-self: center;
+    }
 
-.request-limit-cta {
-    align-self: flex-start;
-    text-decoration: none;
-}
-
-.request-cta {
-        font-size: 19px;
+    .request-footer {
+        gap: 8px;
+        padding: 0 16px 18px;
     }
 }
