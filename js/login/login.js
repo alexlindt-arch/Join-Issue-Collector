@@ -196,6 +196,24 @@ async function loadUsers() {
 
 
 /**
+ * Loads all contacts from Firebase together with their database keys.
+ * @async
+ * @returns {Promise<Array<{key: string, contact: Object}>>} Contacts, or an empty array on error.
+ */
+async function loadContactEntries() {
+    try {
+        const response = await fetch(`${FIREBASE_BASE}/contacts.json`);
+        const data = await response.json();
+        if (!data) return [];
+        return Object.entries(data).filter(([, c]) => c).map(([key, contact]) => ({ key, contact }));
+    } catch (e) {
+        console.error('Error loading contacts:', e);
+        return [];
+    }
+}
+
+
+/**
  * Builds a PUT fetch options object for Firebase writes.
  * @param {Object} body - Data to serialize as JSON body.
  * @returns {Object} Fetch options with method, headers, and body.

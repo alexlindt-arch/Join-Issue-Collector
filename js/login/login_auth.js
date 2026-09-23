@@ -203,15 +203,31 @@ function validateRegisterInput(password, email) {
 
 
 /**
- * Checks for duplicate email and returns the next available user id.
- * @async 
+ * Checks for duplicate email and returns the next id that is free for users and contacts,
+ * so the new contact never overwrites an existing one.
+ * @async
  * @param {string} email - Email to check for uniqueness.
  * @returns {Promise<number|null>} Next id, or null if the email is already taken.
  */
 async function getNextUserId(email) {
-    const users = await loadUsers();
+    const [users, contacts] = await Promise.all([loadUsers(), loadContactEntries()]);
     if (users.some(u => u.email === email)) return null;
-    return users.reduce((max, u) => Math.max(max, Number(u.id) || 0), 0) + 1;
+    const maxUserId = users.reduce((max, u) => Math.max(max, Number(u.id) || 0), 0);
+    const maxContactId = contacts.reduce((max, c) => Math.max(max, Number(c.key) || 0, Number(c.contact.id) || 0), 0);
+    return Math.max(maxUserId, maxContactId) + 1;
+}
+
+
+/**
+ * Finds a contact that already uses this email, e.g. one added on the contacts page.
+ * @async
+ * @param {string} email - Email of the new user.
+ * @returns {Promise<{key: string, contact: Object}|undefined>} The existing contact entry, if any.
+ */
+async function findContactByEmail(email) {
+    const contacts = await loadContactEntries();
+    const wanted = email.toLowerCase();
+    return contacts.find(c => String(c.contact.email || '').toLowerCase() === wanted);
 }
 
 
@@ -242,7 +258,8 @@ function buildNewUserAndContact(id, name, email, password) {
 async function saveRegistration(newId, newUser, newContact) {
     try {
         await saveUserToFirebase(newId, newUser);
-        await saveContactToFirebase(newId, newContact);
+        const existing = await findContactByEmail(newContact.email);
+        if (!existing) await saveContactToFirebase(newId, newContact);
         showNotification('Registration successful!');
         setTimeout(() => switchForm('registration_section', 'login_section'), 2000);
     } catch (e) {
