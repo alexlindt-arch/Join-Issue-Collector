@@ -103,6 +103,30 @@
         <a href="legal_notice.html">Legal notice</a>
     </footer>
 
+    <!-- Email mask: shown while the mail app opens, falls back to Gmail in the browser -->
+    <div class="mail-mask d-none" id="mail-mask" role="dialog" aria-modal="true" aria-labelledby="mail-mask-title">
+        <div class="mail-mask-backdrop" aria-hidden="true">
+            <div class="mail-mask-appbar"></div>
+            <div class="mail-mask-inbox">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="mail-mask-window">
+            <div class="mail-mask-window-head">
+                <span id="mail-mask-title">New message</span>
+            </div>
+            <div class="mail-mask-field"><span>From</span><span class="mail-mask-value">your.email@example.com</span></div>
+            <div class="mail-mask-field"><span>To</span><span class="mail-mask-value js-mail-mask-to"></span></div>
+            <div class="mail-mask-field"><span>Subject</span><span class="mail-mask-value js-mail-mask-subject"></span></div>
+            <div class="mail-mask-body">
+                <p class="js-mail-mask-body"></p><span class="mail-mask-cursor" aria-hidden="true">|</span>
+            </div>
+            <p class="mail-mask-status" id="mail-mask-status" aria-live="polite">Opening your email app …</p>
+            <a class="mail-mask-fallback" id="mail-mask-fallback" href="#" target="_blank" rel="noopener">Open in Gmail instead</a>
+        </div>
+        <button type="button" class="mail-mask-back" onclick="closeMailMask()">Back</button>
+    </div>
+
     <script src="../js/config.js"></script>
     <script src="../js/request/request.js"></script>
 </body>

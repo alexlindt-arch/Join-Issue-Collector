@@ -250,6 +250,165 @@
     color: var(--secondaryColor);
 }
 
+/* Email mask: fake mail client shown while the real mail app opens */
+.mail-mask-open {
+    overflow: hidden;
+}
+
+.mail-mask {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: #FFFFFF;
+    box-sizing: border-box;
+}
+
+.mail-mask.d-none {
+    display: none;
+}
+
+.mail-mask-backdrop {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.mail-mask-appbar {
+    height: 80px;
+    background: #2D2D2D;
+}
+
+.mail-mask-inbox {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    height: 100%;
+    padding: 40px 80px;
+    background: #D9D9D9;
+    filter: blur(2px);
+    box-sizing: border-box;
+}
+
+.mail-mask-inbox span {
+    height: 28px;
+    border-radius: 6px;
+    background: #BDBDBD;
+}
+
+.mail-mask-inbox span:nth-child(odd) {
+    width: 72%;
+}
+
+.mail-mask-window {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1134px;
+    min-height: min(583px, calc(100vh - 200px));
+    margin-top: 17px;
+    border-radius: 16px;
+    background: #FFFFFF;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+.mail-mask-window-head {
+    padding: 14px 24px;
+    background: #F2F6FC;
+    color: #1F1F1F;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.mail-mask-field {
+    display: flex;
+    gap: 12px;
+    margin: 0 24px;
+    padding: 12px 0;
+    border-bottom: 1px solid #E0E0E0;
+    color: #5F6368;
+    font-size: 16px;
+    line-height: 120%;
+}
+
+.mail-mask-value {
+    min-width: 0;
+    color: #000000;
+    overflow-wrap: anywhere;
+}
+
+.mail-mask-body {
+    flex: 1;
+    padding: 16px 24px;
+    color: #000000;
+    font-size: 16px;
+    line-height: 140%;
+}
+
+.mail-mask-body p {
+    display: inline;
+    margin: 0;
+    white-space: pre-line;
+}
+
+.mail-mask-cursor {
+    animation: mail-mask-blink 1s steps(1) infinite;
+}
+
+@keyframes mail-mask-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+.mail-mask-status {
+    margin: 0;
+    padding: 0 24px;
+    color: #42526E;
+    font-size: 16px;
+}
+
+.mail-mask-fallback {
+    align-self: flex-start;
+    margin: 8px 24px 24px;
+    color: #177DA8;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.mail-mask-back {
+    position: absolute;
+    right: 156px;
+    bottom: 122px;
+    padding: 15px 24px;
+    border: 1px solid #2A3647;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    color: #2A3647;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 120%;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.mail-mask-back:hover {
+    border-color: #29ABE2;
+    color: #29ABE2;
+}
+
+@media (max-height: 1023px), (max-width: 1439px) {
+    .mail-mask-back {
+        right: 24px;
+        bottom: 24px;
+    }
+}
+
 @media (max-width: 900px) {
     .request-intro-grid {
         flex-direction: column;
@@ -439,5 +598,57 @@
     .request-footer {
         gap: 8px;
         padding: 0 16px 18px;
+    }
+
+    .mail-mask {
+        align-items: flex-start;
+        padding: 0 22px 96px;
+        background: #FBF9FE;
+        overflow-y: auto;
+    }
+
+    .mail-mask-backdrop {
+        display: none;
+    }
+
+    .mail-mask-window {
+        max-width: 383px;
+        min-height: 0;
+        margin: 0 auto;
+        border-radius: 0;
+        background: #FBF9FE;
+        box-shadow: none;
+    }
+
+    .mail-mask-window-head {
+        padding: 24px 12px 16px;
+        background: none;
+        font-size: 20px;
+    }
+
+    .mail-mask-field {
+        margin: 0 12px;
+        padding: 18px 0;
+    }
+
+    .mail-mask-body {
+        min-height: 160px;
+        padding: 18px 12px;
+    }
+
+    .mail-mask-status {
+        padding: 0 12px;
+    }
+
+    .mail-mask-fallback {
+        margin: 8px 12px 0;
+    }
+
+    .mail-mask-back {
+        position: fixed;
+        right: auto;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 }

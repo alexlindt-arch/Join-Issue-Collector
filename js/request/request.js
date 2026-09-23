@@ -76,16 +76,129 @@ function renderRequestUsage(used) {
  */
 function renderMailLinks() {
     const address = JOIN_REQUEST_EMAIL;
-    const mailto = `mailto:${address}?subject=${encodeURIComponent(REQUEST_MAIL_SUBJECT)}&body=${encodeURIComponent(REQUEST_MAIL_BODY)}`;
+    const mailto = buildMailtoUrl(address);
     document.querySelectorAll('.js-request-mail').forEach(link => {
         link.href = mailto;
         link.classList.toggle('d-none', !address);
+        link.addEventListener('click', openMailMask);
     });
+    renderMailMask(address);
     document.querySelectorAll('.js-request-address').forEach(link => {
         link.href = address ? `mailto:${address}` : '#';
         link.textContent = address || 'our request mailbox';
     });
     document.getElementById('request-mail-missing').classList.toggle('d-none', Boolean(address));
+}
+
+
+/**
+ * Builds the mailto link with the request template.
+ * @param {string} address - Request mailbox.
+ * @returns {string} mailto URL.
+ */
+function buildMailtoUrl(address) {
+    return `mailto:${address}?subject=${encodeURIComponent(REQUEST_MAIL_SUBJECT)}&body=${encodeURIComponent(REQUEST_MAIL_BODY)}`;
+}
+
+
+/**
+ * Builds a Gmail compose link with the same template, used when no mail app opens.
+ * @param {string} address - Request mailbox.
+ * @returns {string} Gmail compose URL.
+ */
+function buildGmailUrl(address) {
+    const params = new URLSearchParams({ view: 'cm', fs: '1', to: address, su: REQUEST_MAIL_SUBJECT, body: REQUEST_MAIL_BODY });
+    return `https://mail.google.com/mail/?${params}`;
+}
+
+
+/**
+ * Fills the email mask with the address and the template text.
+ * @param {string} address - Request mailbox.
+ * @returns {void}
+ */
+function renderMailMask(address) {
+    document.querySelector('.js-mail-mask-to').textContent = address;
+    document.querySelector('.js-mail-mask-subject').textContent = REQUEST_MAIL_SUBJECT;
+    document.querySelector('.js-mail-mask-body').textContent = REQUEST_MAIL_BODY;
+    document.getElementById('mail-mask-fallback').href = buildGmailUrl(address);
+}
+
+
+/** Timer that redirects to Gmail when no mail app took over. */
+let mailFallbackTimer = null;
+
+/** Time the mail app gets to open before the page redirects to Gmail. */
+const MAIL_FALLBACK_DELAY = 3000;
+
+
+/**
+ * Shows the email mask and opens the mail app. When the page keeps the focus
+ * (no mail app installed or registered), the tab is redirected to Gmail in the browser.
+ * @param {MouseEvent} event - Click on a mail button.
+ * @returns {void}
+ */
+function openMailMask(event) {
+    event.preventDefault();
+    const mask = document.getElementById('mail-mask');
+    mask.classList.remove('d-none');
+    document.body.classList.add('mail-mask-open');
+    setMailMaskStatus('Opening your email app …');
+    watchMailAppLaunch();
+    window.location.href = buildMailtoUrl(JOIN_REQUEST_EMAIL);
+}
+
+
+/**
+ * Starts the fallback timer and cancels it as soon as the mail app takes the focus.
+ * @returns {void}
+ */
+function watchMailAppLaunch() {
+    clearTimeout(mailFallbackTimer);
+    const onLeave = () => {
+        clearTimeout(mailFallbackTimer);
+        setMailMaskStatus('Your email app is open. Send the email there, then come back here.');
+    };
+    window.addEventListener('blur', onLeave, { once: true });
+    document.addEventListener('visibilitychange', onLeave, { once: true });
+    mailFallbackTimer = setTimeout(() => {
+        window.removeEventListener('blur', onLeave);
+        document.removeEventListener('visibilitychange', onLeave);
+        redirectToGmail();
+    }, MAIL_FALLBACK_DELAY);
+}
+
+
+/**
+ * Redirects the tab to Gmail compose, unless the mask was closed in the meantime.
+ * @returns {void}
+ */
+function redirectToGmail() {
+    if (document.getElementById('mail-mask').classList.contains('d-none')) return;
+    if (document.visibilityState === 'hidden' || !document.hasFocus()) return;
+    setMailMaskStatus('No email app found – redirecting to Gmail …');
+    window.location.href = buildGmailUrl(JOIN_REQUEST_EMAIL);
+}
+
+
+/**
+ * Updates the status line inside the email mask.
+ * @param {string} text - Status text.
+ * @returns {void}
+ */
+function setMailMaskStatus(text) {
+    document.getElementById('mail-mask-status').textContent = text;
+}
+
+
+/**
+ * Back button in the email mask: hides it and stops the Gmail redirect.
+ * @returns {void}
+ */
+function closeMailMask() {
+    clearTimeout(mailFallbackTimer);
+    document.getElementById('mail-mask').classList.add('d-none');
+    document.body.classList.remove('mail-mask-open');
 }
 
 
