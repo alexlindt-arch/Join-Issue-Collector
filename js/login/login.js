@@ -1,4 +1,4 @@
-const FIREBASE_BASE = 'https://remotestorage-c0469-default-rtdb.europe-west1.firebasedatabase.app';
+const FIREBASE_BASE = JOIN_DB_URL;
 const USERS_URL = `${FIREBASE_BASE}/users.json`;
 
 

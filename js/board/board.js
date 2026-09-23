@@ -1,4 +1,4 @@
-const BOARD_BASE_URL = 'https://remotestorage-c0469-default-rtdb.europe-west1.firebasedatabase.app';
+const BOARD_BASE_URL = JOIN_DB_URL;
 
 let allTasks = [];
 let currentDraggedTaskId = null;

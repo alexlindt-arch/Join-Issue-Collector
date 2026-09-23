@@ -1,4 +1,4 @@
-const ADDTASK_BASE_URL = 'https://remotestorage-c0469-default-rtdb.europe-west1.firebasedatabase.app';
+const ADDTASK_BASE_URL = JOIN_DB_URL;
 const ADDTASK_TASKS_URL = `${ADDTASK_BASE_URL}/tasks.json`;
 const ADDTASK_CONTACTS_URL = `${ADDTASK_BASE_URL}/contacts.json`;
 

@@ -2,7 +2,7 @@ const dialogElement = document.querySelector("dialog");
 const dialog = document.getElementById("add-contact-dialog");
 const contactListContainer = document.getElementById("contacts-list-import");
 const contactDetailsContainer = document.getElementById("contact-details-view");
-const CONTACTS_URL = 'https://remotestorage-c0469-default-rtdb.europe-west1.firebasedatabase.app/contacts.json';
+const CONTACTS_URL = `${JOIN_DB_URL}/contacts.json`;
 let loadedContacts = [];
 
 
