@@ -279,9 +279,9 @@ body.app-page { max-width: none; overflow-x: hidden; }
   .stat-card { height: 144px; padding: 0 19px; gap: 18px; }
   .urgency-card { height: 144px; padding: 28px 20px; gap: 20px; margin-top: 0; }
   .cards-row-sm { gap: 16px; }
-  .cards-row-mid { flex-wrap: wrap; gap: 16px; margin-top: 0; }
-  .cards-row-mid .urgency-card { flex: 1 1 100%; }
-  .cards-row-mid .stat-card-requests { flex: 1 1 100%; }
+  .cards-row-mid { flex-wrap: nowrap; gap: 16px; margin-top: 0; }
+  .cards-row-mid .urgency-card { flex: 256 1 0; width: 0; padding: 20px 8px; gap: 8px; }
+  .cards-row-mid .stat-card-requests { flex: 116 1 0; width: 0; min-width: 0; padding: 25px 4px; }
   .stat-card-sm { height: 144px; padding: 25px 4px; gap: 13px; }
 
   /* Label immer 2-zeilig -> alle Zahlen auf gleicher Höhe */
@@ -297,6 +297,12 @@ body.app-page { max-width: none; overflow-x: hidden; }
   }
 }
 
+
+@media (max-width: 360px) {
+  .cards-row-mid .urgency-right { min-width: 0; }
+  .cards-row-mid .urgency-date,
+  .cards-row-mid .urgency-date-label { font-size: 12px; white-space: normal; }
+}
 
 @media (max-width: 320px) {
   .summary-heading { margin-bottom: 28px; }
