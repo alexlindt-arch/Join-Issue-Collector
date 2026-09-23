@@ -79,8 +79,28 @@
 }
 
 .detail-requester {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
     margin: 0 0 16px;
     font-size: 14px;
+}
+
+.creator-badge {
+    padding: 2px 8px;
+    border-radius: 8px;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.creator-badge--internal {
+    background: var(--primaryColor);
+}
+
+.creator-badge--external {
+    background: var(--category-orange);
 }
 
 .detail-btn--accept {

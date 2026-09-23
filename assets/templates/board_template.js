@@ -87,7 +87,7 @@ function taskCardTemplate(task) {
             <span class="task-card-category ${categoryColorClass(task.category)}">${escapeHtml(task.category || '')}</span>
             <div class="task-card-title">${escapeHtml(task.title || '')}</div>
             ${task.description ? `<div class="task-card-desc">${escapeHtml(truncate(task.description, 60))}</div>` : ''}
-            ${task.requester ? `<div class="task-card-requester">von ${escapeHtml(task.requester.name || task.requester.email || '')}</div>` : ''}
+            ${getTaskCreator(task)?.type === 'external' ? `<div class="task-card-requester">by ${escapeHtml(getTaskCreator(task).name || getTaskCreator(task).email)}</div>` : ''}
             ${progress}
             <div class="task-card-footer">
                 <div class="task-card-avatars">${avatars}</div>
@@ -302,15 +302,32 @@ function buildDetailActions(task) {
 
 
 /**
- * Returns the requester line for feature requests or empty string.
- * @param {Object} task - Task object with optional requester.
- * @returns {string} HTML string.
+ * Returns the creator of a task. Older feature requests only stored a requester,
+ * which is always an external stakeholder.
+ * @param {Object} task - Task object with optional creator or requester.
+ * @returns {{name: string, email: string, type: 'internal'|'external'}|null} Creator or null.
+ */
+function getTaskCreator(task) {
+    if (task.creator) return task.creator;
+    if (task.requester) return { ...task.requester, type: 'external' };
+    return null;
+}
+
+
+/**
+ * Returns the creator line for the detail view: name, email and an internal/external badge.
+ * @param {Object} task - Task object.
+ * @returns {string} HTML string, empty when the task has no creator.
  */
 function buildDetailRequester(task) {
-    if (!task.requester) return '';
-    const r = task.requester;
-    const who = [r.name, r.email].filter(Boolean).map(escapeHtml).join(' &middot; ');
-    return `<p class="detail-requester">Feature request von ${who}${task.createdAt ? ` am ${new Date(task.createdAt).toLocaleDateString('de-DE')}` : ''}</p>`;
+    const creator = getTaskCreator(task);
+    if (!creator) return '';
+    const external = creator.type === 'external';
+    const who = [creator.name, creator.email].filter(Boolean).map(escapeHtml).join(' &middot; ');
+    const date = task.createdAt ? ` on ${new Date(task.createdAt).toLocaleDateString('en-GB')}` : '';
+    return `<p class="detail-requester">
+            <span class="creator-badge ${external ? 'creator-badge--external' : 'creator-badge--internal'}">${external ? 'External' : 'Internal'}</span>
+            Created by ${who || 'unknown'}${date}</p>`;
 }
 
 

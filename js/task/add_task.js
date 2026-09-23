@@ -124,7 +124,9 @@ function collectTask() {
         priority: selectedPriority,
         assignedTo: getAssignedContacts(),
         subtasks: subtasks,
-        status: 'todo'
+        status: 'triage',
+        creator: buildInternalCreator(),
+        createdAt: new Date().toISOString()
     };
 }
 

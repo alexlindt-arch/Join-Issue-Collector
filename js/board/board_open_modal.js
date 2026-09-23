@@ -1,11 +1,11 @@
 /**
  * Opens the add-task modal for the given status column.
  * @async 
- * @param {string} [status='todo']
+ * @param {string} [status='triage'] - Target column; new tasks start in Triage by default.
  * @returns {Promise<void>}
  */
-async function openAddTaskModal(status = 'todo') {
-  modalDefaultStatus = status || 'todo';
+async function openAddTaskModal(status = 'triage') {
+  modalDefaultStatus = status || 'triage';
   showModalOverlay();
   if (modalContacts.length === 0) modalContacts = await loadAssignContacts();
   clearModalTaskForm();

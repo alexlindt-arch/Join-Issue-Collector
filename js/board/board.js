@@ -149,7 +149,7 @@ function updateTriageCount(tasks) {
 
 
 /**
- * Moves a triage task (feature request) into the To do column.
+ * Moves a triage task into the To do column.
  * @async
  * @param {number|string} id - Task id.
  * @returns {Promise<void>}
@@ -161,7 +161,7 @@ async function acceptTriageTask(id) {
     await updateTaskStatus(task);
     closeOverlay();
     displayTasks(allTasks);
-    notify('Feature request moved to To do.');
+    notify('Task moved to To do.');
 }
 
 
@@ -228,7 +228,7 @@ function showEmptyPlaceholders() {
  */
 function getEmptyColumnTexts() {
     return Object.entries({
-        triage: 'No feature requests',
+        triage: 'No tasks in triage',
         todo: 'No tasks To do',
         inProgress: 'No tasks progress',
         awaitFeedback: 'No tasks feedback',

@@ -132,7 +132,9 @@ function collectModalTask() {
         category: modalSelectedCategory,
         assignedTo: collectModalAssignedTo(),
         subtasks: modalSubtasks,
-        status: modalDefaultStatus
+        status: modalDefaultStatus,
+        creator: buildInternalCreator(),
+        createdAt: new Date().toISOString()
     };
 }
 
