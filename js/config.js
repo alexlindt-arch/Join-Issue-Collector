@@ -4,4 +4,4 @@
  * (Firebase console → Build → Realtime Database, shown at the top of the data view).
  * @type {string}
  */
-const JOIN_DB_URL = 'https://DEIN-PROJEKT-default-rtdb.europe-west1.firebasedatabase.app';
+const JOIN_DB_URL = 'https://join-issue-collector-d9c37-default-rtdb.europe-west1.firebasedatabase.app';
