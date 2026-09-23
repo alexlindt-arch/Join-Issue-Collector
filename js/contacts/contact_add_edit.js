@@ -16,11 +16,9 @@ function openAddContactModal() {
 
     dialog.innerHTML = renderAddContactTemplate();
 
-    const avatarBox = dialog.querySelector('.profile-placeholder');
-    if (avatarBox) {
-        avatarBox.style.backgroundColor = '';
-        avatarBox.innerHTML = '<img class="big-avatar" src="../assets/icons/person.svg" alt="User Icon">';;
-    }
+    pendingContactPhoto = '';
+    dialogContactBase = {};
+    renderDialogAvatar();
     openDialog();
 }
 
@@ -59,10 +57,9 @@ function editContact(id) {
  * @returns {void}
  */
 function fillEditForm(contact) {
-    const avatarBox = dialog.querySelector('.profile-placeholder');
-    if (avatarBox) {
-        avatarBox.innerHTML = `<div class="big-avatar" style="background-color: ${contact.color}">${contact.avatar}</div>`;
-    }
+    pendingContactPhoto = contact.photo || '';
+    dialogContactBase = contact;
+    renderDialogAvatar();
     document.getElementById('modal-name').value = contact.name;
     document.getElementById('modal-email').value = contact.email;
     document.getElementById('modal-phone').value = contact.phone || '';
@@ -92,7 +89,8 @@ function createNewContact(event) {
     const newContact = {
         name: formData.get('name'),
         email: formData.get('email'),
-        phone: formData.get('phone') || 'no phone number provided'
+        phone: formData.get('phone') || 'no phone number provided',
+        photo: pendingContactPhoto
     };
     saveContactToDB(newContact);
     showToastFeedback('Contact successfully created');
@@ -242,4 +240,49 @@ function validateField(fieldName) {
         return checkNameField(config.id, config.errorId);
     }
     return checkFieldRegex(config.id, config.errorId, config.rule);
+}
+
+
+/**
+ * Renders the avatar inside the contact dialog: photo, initials or the default icon.
+ * @returns {void}
+ */
+function renderDialogAvatar() {
+    const avatarBox = dialog?.querySelector('.profile-placeholder');
+    if (!avatarBox) return;
+    const person = { ...dialogContactBase, photo: pendingContactPhoto };
+    const inner = person.photo || person.avatar
+        ? `<div class="big-avatar" style="background-color: ${person.color || '#ccc'}">${avatarInnerHTML(person)}</div>`
+        : '<img class="big-avatar" src="../assets/icons/person.svg" alt="User Icon">';
+    avatarBox.innerHTML = inner + '<span class="avatar-upload-hint" aria-hidden="true">&#128247;</span>';
+    document.getElementById('avatar-remove-btn')?.classList.toggle('d-none', !pendingContactPhoto);
+}
+
+
+/**
+ * Compresses the selected image and shows it as the contact photo preview.
+ * @async
+ * @param {HTMLInputElement} input - The file input.
+ * @returns {Promise<void>}
+ */
+async function handleContactPhotoSelect(input) {
+    const file = input.files[0];
+    input.value = '';
+    if (!file) return;
+    try {
+        pendingContactPhoto = await fileToAvatar(file);
+        renderDialogAvatar();
+    } catch (e) {
+        showToastFeedback(e.message);
+    }
+}
+
+
+/**
+ * Removes the photo from the contact in the dialog.
+ * @returns {void}
+ */
+function removeContactPhoto() {
+    pendingContactPhoto = '';
+    renderDialogAvatar();
 }

@@ -6,7 +6,7 @@
  */
 function renderContactlist(contact) {
     return `<div class="contact-item" id="${contact.id}" onclick="showContactDetails('${contact.id}')">
-        <div class="avatar" style="background-color: ${contact.color};">${contact.avatar}</div>
+        <div class="avatar" style="background-color: ${contact.color};">${avatarInnerHTML(contact)}</div>
         <div class="contact-info">
             <span class="name">${contact.name}</span>
             <span class="email">${contact.email}</span>
@@ -38,7 +38,7 @@ function renderLetterGroupTemplate(letter, itemsHtml) {
  */
 function renderContactDetails(contact) {
     return `<div class="profile-header">
-                        <div class="profile-avatar" style="background-color: ${contact.color};">${contact.avatar}</div>
+                        <div class="profile-avatar" style="background-color: ${contact.color};">${avatarInnerHTML(contact)}</div>
                         <div class="profile-meta">
                             <h2 class="profile-name">${contact.name}</h2>
                             <div class="profile-actions for-mobile-hide" id="profile">
@@ -110,8 +110,14 @@ function renderDialogContact(title, submitAction, buttonHtml) {
             <form method="dialog" class="modal-right" onsubmit="handleContactSubmit(event, window.currentSubmitAction)">
                 <button type="button" class="close-dialog dp-hidden-mobile" onclick="closeDialog()">×</button>
 
-                <div class="profile-placeholder">
-                    <i class="fa-solid fa-user"></i>
+                <div class="avatar-upload">
+                    <label class="profile-placeholder" for="modal-photo" title="Upload photo (JPG/PNG)">
+                        <i class="fa-solid fa-user"></i>
+                    </label>
+                    <input type="file" id="modal-photo" accept="image/jpeg,image/png" hidden
+                        onchange="handleContactPhotoSelect(this)">
+                    <button type="button" class="avatar-remove-btn d-none" id="avatar-remove-btn"
+                        onclick="removeContactPhoto()">Remove photo</button>
                 </div>
 
                 <div class="input-group">

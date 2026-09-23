@@ -4,6 +4,8 @@ const contactListContainer = document.getElementById("contacts-list-import");
 const contactDetailsContainer = document.getElementById("contact-details-view");
 const CONTACTS_URL = `${JOIN_DB_URL}/contacts.json`;
 let loadedContacts = [];
+let pendingContactPhoto = '';
+let dialogContactBase = {};
 
 
 /**
@@ -58,7 +60,8 @@ function addContactsToLoaded(contactsFromDB) {
                 id: cId, name: c.name, email: c.email,
                 phone: c.phone || 'no phone number provided',
                 color: c.color || getRandomColor(),
-                avatar: c.avatar || getInitials(c.name)
+                avatar: c.avatar || getInitials(c.name),
+                photo: c.photo || ''
             });
         }
     });
@@ -207,7 +210,8 @@ async function updateContact(event, id) {
     const updated = {
         id: contact.id, color: contact.color,
         name: data.get('name').trim(), email: data.get('email').trim(),
-        phone: data.get('phone').trim() || 'no phone number provided'
+        phone: data.get('phone').trim() || 'no phone number provided',
+        photo: pendingContactPhoto
     };
     updated.avatar = getInitials(updated.name);
     if (checkIsGuest()) updateGuestContact(updated); else await updateUserContact(updated);
