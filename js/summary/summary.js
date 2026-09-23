@@ -70,7 +70,7 @@ function mergeTasksById(fileTasks, localTasks) {
 /**
  * Counts how many tasks currently have the given board status.
  * @param {Object[]} tasks - All tasks.
- * @param {string} status - One of 'todo' | 'inProgress' | 'awaitFeedback' | 'done'.
+ * @param {string} status - One of 'triage' | 'todo' | 'inProgress' | 'awaitFeedback' | 'done'.
  * @returns {number} Number of matching tasks.
  */
 function countTasks(tasks, status) {
@@ -90,6 +90,7 @@ function renderStats(tasks) {
     setNumber('stat-feedback', countTasks(tasks, 'awaitFeedback'));
     setNumber('stat-total', tasks.length);
     setNumber('stat-urgent', tasks.filter(task => task.priority === 'urgent').length);
+    setNumber('stat-requests', countTasks(tasks, 'triage'));
     renderDeadline(tasks);
 }
 
