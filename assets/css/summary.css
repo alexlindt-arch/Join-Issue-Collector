@@ -299,9 +299,12 @@ body.app-page { max-width: none; overflow-x: hidden; }
 
 
 @media (max-width: 360px) {
-  .cards-row-mid .urgency-right { min-width: 0; }
+  /* Icon + "0 Urgent" rücken nach links, damit rechts Platz für "No upcoming deadline" bleibt */
+  .cards-row-mid .urgency-card { justify-content: flex-start; padding: 20px 12px; gap: 10px; }
+  .cards-row-mid .urgency-icon-circle { display: none; }
+  .cards-row-mid .urgency-right { flex: 1; min-width: 0; }
   .cards-row-mid .urgency-date,
-  .cards-row-mid .urgency-date-label { font-size: 12px; white-space: normal; }
+  .cards-row-mid .urgency-date-label { font-size: 16px; white-space: normal; }
 }
 
 @media (max-width: 320px) {
