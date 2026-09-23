@@ -1,0 +1,189 @@
+{
+  "name": "Join Status Notifier",
+  "nodes": [
+    {
+      "id": "6b660e17-a0b2-4d26-9181-d2337dac176b",
+      "name": "Note: Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -360
+      ],
+      "parameters": {
+        "content": "## Join Status Notifier\nThe Join board calls this webhook with `{ taskId }` after a task moved to another column.\n\nThe task and the creator email are read from Firebase, and `lastNotifiedStatus` prevents duplicate mails. The creator gets one email per new column.",
+        "width": 480,
+        "height": 260
+      }
+    },
+    {
+      "id": "e477a5db-cc78-4a9b-9529-a29eb3beaff0",
+      "name": "Status Change Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "join-status-change",
+        "responseMode": "onReceived",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "webhookId": "eef228e0-2390-4a97-be1b-b558ce3dad20"
+    },
+    {
+      "id": "0150ed24-e9b1-4b73-9b44-836f5d5a2057",
+      "name": "Validate Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "jsCode": "/**\n * Validate Payload (status notifier).\n * Accepts only a short task id from the board and drops everything else.\n * @returns {Array<{json: {taskId: string}}>} One item with the task id, or no item for invalid calls.\n */\nconst taskId = String($json.body?.taskId ?? '').trim();\n\nif (!/^[A-Za-z0-9_-]{1,40}$/.test(taskId)) return [];\n\nreturn [{ json: { taskId } }];\n"
+      }
+    },
+    {
+      "id": "a0221e51-b55c-4006-a59d-1a1385199f5c",
+      "name": "Load Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "method": "GET",
+        "url": "=https://join-issue-collector-d9c37-default-rtdb.europe-west1.firebasedatabase.app/tasks/{{ $json.taskId }}.json",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "9c6200a0-ab04-43b4-a79d-e11bd8a79ea6",
+      "name": "Decide Notification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "jsCode": "/**\n * Decide Notification (status notifier).\n * The board only sends the task id. The task, its status and the creator's email are read\n * from Firebase, so nobody can trigger mails to arbitrary addresses through the webhook.\n * A mail is only sent when the status differs from the last status the creator was told about.\n * @returns {Array<{json: Object}>} One item with the mail data, or no item when nothing is to be sent.\n */\nconst COLUMN_NAMES = {\n    triage: 'Triage',\n    todo: 'To do',\n    inProgress: 'In progress',\n    awaitFeedback: 'Awaiting feedback',\n    done: 'Done'\n};\nconst EMAIL_PATTERN = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/;\n\nlet task = null;\ntry {\n    task = JSON.parse($json.data);\n} catch (error) {\n    task = null;\n}\n\nconst creator = task?.creator || (task?.requester ? { ...task.requester, type: 'external' } : null);\nconst status = task?.status;\n\nif (!task || !COLUMN_NAMES[status]) return [];\nif (!creator || !EMAIL_PATTERN.test(String(creator.email || ''))) return [];\nif (task.lastNotifiedStatus === status) return [];\n\nreturn [{\n    json: {\n        taskId: $('Validate Payload').first().json.taskId,\n        title: task.title || 'Untitled task',\n        status,\n        columnName: COLUMN_NAMES[status],\n        creatorName: creator.name || creator.email,\n        creatorEmail: creator.email\n    }\n}];\n"
+      }
+    },
+    {
+      "id": "0be22c6f-d37b-4311-8c1d-85dccc544848",
+      "name": "Remember Notified Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://join-issue-collector-d9c37-default-rtdb.europe-west1.firebasedatabase.app/tasks/{{ $json.taskId }}.json",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ lastNotifiedStatus: $json.status }) }}"
+      }
+    },
+    {
+      "id": "516ccbc9-24d8-4e1e-bf3d-8b1af06d867b",
+      "name": "Email Creator",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "sendTo": "={{ $('Decide Notification').first().json.creatorEmail }}",
+        "subject": "=Your ticket \"{{ $('Decide Notification').first().json.title }}\" is now in {{ $('Decide Notification').first().json.columnName }}",
+        "emailType": "text",
+        "message": "=Hello {{ $('Decide Notification').first().json.creatorName }},\n\nyour ticket \"{{ $('Decide Notification').first().json.title }}\" was moved to the column \"{{ $('Decide Notification').first().json.columnName }}\" on our Join board.\n\nBest regards\nJoin Issue Collector",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Join Issue Collector"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Status Change Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Payload": {
+      "main": [
+        [
+          {
+            "node": "Load Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Task": {
+      "main": [
+        [
+          {
+            "node": "Decide Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decide Notification": {
+      "main": [
+        [
+          {
+            "node": "Remember Notified Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remember Notified Status": {
+      "main": [
+        [
+          {
+            "node": "Email Creator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Berlin",
+    "saveManualExecutions": true
+  },
+  "active": false,
+  "pinData": {}
+}
