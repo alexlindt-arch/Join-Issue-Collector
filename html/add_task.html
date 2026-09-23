@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../assets/css/add_task.css">
     <link rel="stylesheet" href="../assets/vendor/flatpickr/flatpickr.min.css">
+    <link rel="stylesheet" href="../assets/css/features.css">
     <title>Add Task</title>
 </head>
 
@@ -142,6 +143,17 @@
                             <span class="field-error d-none" id="error-due">This field is required</span>
                         </div>
 
+                        <div class="form-group">
+                            <label class="form-label" for="task-attachments">Attachments</label>
+                            <label class="attachment-drop" for="task-attachments">
+                                <span>&#128206; Add images</span>
+                                <span class="attachment-hint">JPG/PNG, max. 1 MB per task</span>
+                            </label>
+                            <input type="file" id="task-attachments" accept="image/jpeg,image/png" multiple hidden
+                                onchange="handleAttachmentSelect(this)">
+                            <div class="attachment-list" id="attachment-list"></div>
+                        </div>
+
                     </div>
 
                     <div class="form-divider-vertical"></div>
@@ -250,6 +262,7 @@
 
     <div id="notification" class="notification d-none"></div>
     <script src="../js/config.js"></script>
+    <script src="../js/image_utils.js"></script>
     <script src="../script.js"></script>
     <script src="../assets/templates/add_task_template.js"></script>
     <script src="../js/task/add_task.js"></script>

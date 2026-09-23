@@ -57,8 +57,10 @@ function resetModalCategory() {
 function resetModalAssignAndSubtasks() {
     modalAssignedIds = [];
     modalSubtasks = [];
+    modalAttachments = [];
     renderModalAssignedAvatars();
     renderModalSubtasks();
+    renderModalAttachments();
 }
 
 
@@ -132,6 +134,7 @@ function collectModalTask() {
         category: modalSelectedCategory,
         assignedTo: collectModalAssignedTo(),
         subtasks: modalSubtasks,
+        attachments: modalAttachments,
         status: modalDefaultStatus
     };
 }

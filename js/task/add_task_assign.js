@@ -53,7 +53,8 @@ function normalizeContacts(raw) {
             id: String(contact.id),
             name: contact.name,
             color: contact.color || getRandomColor(),
-            avatar: contact.avatar || getInitials(contact.name)
+            avatar: getInitials(contact.name),
+            photo: contact.photo || ''
         }))
         .sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -119,7 +120,7 @@ function canAssignMorePersons() {
  * @returns {string} HTML string for one avatar chip.
  */
 function avatarChipTemplate(contact) {
-    return `<span class="avatar-chip" style="background-color:${contact.color}">${contact.avatar}</span>`;
+    return `<span class="avatar-chip" style="background-color:${contact.color}">${avatarInnerHTML(contact)}</span>`;
 }
 
 

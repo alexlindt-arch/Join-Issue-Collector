@@ -43,6 +43,17 @@ function renderAddTaskModal() {
                             </div>
                             <span class="field-error d-none" id="modal-error-due">This field is required</span>
                         </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="modal-task-attachments">Attachments</label>
+                            <label class="attachment-drop" for="modal-task-attachments">
+                                <span>&#128206; Add images</span>
+                                <span class="attachment-hint">JPG/PNG, max. 1 MB per task</span>
+                            </label>
+                            <input type="file" id="modal-task-attachments" accept="image/jpeg,image/png" multiple hidden
+                                onchange="handleModalAttachmentSelect(this)">
+                            <div class="attachment-list" id="modal-attachment-list"></div>
+                        </div>
                     </div>
 
                     <div class="form-divider-vertical"></div>

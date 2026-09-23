@@ -8,7 +8,7 @@ function assignOptionTemplate(contact, isSelected) {
     return `
         <div class="assign-option ${isSelected ? 'assign-option--active' : ''}" onclick="togglePerson('${contact.id}'); event.stopPropagation();">
             <span class="assign-option-left">
-                <span class="avatar-chip" style="background-color:${contact.color}">${contact.avatar}</span>
+                <span class="avatar-chip" style="background-color:${contact.color}">${avatarInnerHTML(contact)}</span>
                 <span class="assign-option-name">${escapeHtml(contact.name)}</span>
             </span>
             <span class="assign-checkbox" aria-hidden="true">${isSelected ? '&#x2611;' : '&#x2610;'}</span>
@@ -22,7 +22,7 @@ function assignOptionTemplate(contact, isSelected) {
  * @returns {string} HTML for an avatar chip.
  */
 function avatarChipTemplate(contact) {
-    return `<span class="avatar-chip" style="background-color:${contact.color}">${contact.avatar}</span>`;
+    return `<span class="avatar-chip" style="background-color:${contact.color}">${avatarInnerHTML(contact)}</span>`;
 }
 
 

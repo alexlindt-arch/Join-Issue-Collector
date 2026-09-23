@@ -22,6 +22,7 @@ function initEditState(task) {
   editSelectedPrio = task.priority || 'medium';
   editSubtasks = (task.subtasks || []).map(s => ({ ...s }));
   editAssignedIds = (task.assignedTo || []).map(a => String(a.id));
+  editAttachments = (task.attachments || []).map(a => ({ ...a }));
 }
 
 
@@ -37,6 +38,7 @@ function renderEditModal(task) {
   renderEditAssignOptions();
   renderEditAssignedAvatars();
   renderEditSubtasks();
+  renderEditAttachments();
   attachEditModalListeners();
 }
 
@@ -117,7 +119,8 @@ function mapContacts(raw, isGuest) {
       id: String(isGuest ? (c.id || i + 1) : c.id),
       name: c.name || '',
       color: c.color || '#888',
-      initials: getInitials(c.name)
+      initials: getInitials(c.name),
+      photo: c.photo || ''
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -300,7 +303,8 @@ function buildTaskUpdates(title, task) {
     dueDate: document.getElementById('edit-due').value,
     priority: editSelectedPrio || task.priority,
     assignedTo: buildAssignedTo(),
-    subtasks: editSubtasks
+    subtasks: editSubtasks,
+    attachments: editAttachments
   };
 }
 
@@ -356,4 +360,41 @@ function resetEditState() {
   editSelectedPrio = null;
   editAssignedIds = [];
   editSubtasks = [];
+  editAttachments = [];
+}
+
+
+/**
+ * Compresses the selected images and adds them to the edited task.
+ * @async
+ * @param {HTMLInputElement} input - The file input.
+ * @returns {Promise<void>}
+ */
+async function handleEditAttachmentSelect(input) {
+  const { added, errors } = await filesToAttachments(input.files, editAttachments);
+  editAttachments = editAttachments.concat(added);
+  input.value = '';
+  renderEditAttachments();
+  if (errors.length) notify(errors.join(' '), true);
+}
+
+
+/**
+ * Removes an attachment from the edited task by index.
+ * @param {number} index
+ * @returns {void}
+ */
+function removeEditAttachment(index) {
+  editAttachments.splice(index, 1);
+  renderEditAttachments();
+}
+
+
+/**
+ * Re-renders the attachment thumbnails inside the edit modal.
+ * @returns {void}
+ */
+function renderEditAttachments() {
+  const list = document.getElementById('edit-attachment-list');
+  if (list) list.innerHTML = attachmentThumbsHTML(editAttachments, 'removeEditAttachment');
 }

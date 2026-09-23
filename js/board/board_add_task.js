@@ -7,6 +7,7 @@ let modalAssignedIds = [];
 let modalSubtasks = [];
 let modalContacts = [];
 let modalDefaultStatus = 'todo';
+let modalAttachments = [];
 
 
 /** Normalized contact list from guest or remote source. 
@@ -62,7 +63,8 @@ function normalizeContacts(raw) {
             id: String(contact.id),
             name: contact.name,
             color: contact.color || (typeof getRandomColor === 'function' ? getRandomColor() : '#ccc'),
-            avatar: contact.avatar || getInitials(contact.name)
+            avatar: getInitials(contact.name),
+            photo: contact.photo || ''
         }))
         .sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -159,7 +161,7 @@ function modalAssignOptionTemplate(contact, isSelected) {
              onclick="toggleModalPerson('${contact.id}'); event.stopPropagation();"
              onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleModalPerson('${contact.id}');}">
             <span class="assign-option-left">
-                <span class="avatar-chip" style="background-color:${contact.color}">${contact.avatar}</span>
+                <span class="avatar-chip" style="background-color:${contact.color}">${avatarInnerHTML(contact)}</span>
                 <span class="assign-option-name">${escapeHtml(contact.name)}</span>
             </span>
             <span class="assign-checkbox" aria-hidden="true">${isSelected ? '&#x2611;' : '&#x2610;'}</span>
@@ -205,7 +207,7 @@ function renderModalAssignedAvatars() {
     const container = document.getElementById('modal-assigned-avatars');
     const selected = modalContacts.filter(contact => modalAssignedIds.includes(contact.id));
     const visible = selected.slice(0, 5);
-    let html = visible.map(c => `<span class="avatar-chip" style="background-color:${c.color}">${c.avatar}</span>`).join('');
+    let html = visible.map(c => `<span class="avatar-chip" style="background-color:${c.color}">${avatarInnerHTML(c)}</span>`).join('');
     if (selected.length > 5) html += `<span class="avatar-chip avatar-chip-more">+${selected.length - 5}</span>`;
     container.innerHTML = html;
 }
@@ -341,4 +343,41 @@ function modalSubtaskEditTemplate(subtask, index) {
                 <button type="button" class="subtask-icon-btn" title="Save" onclick="saveModalSubtaskEdit(${index})">&#10003;</button>
             </span>
         </li>`;
+}
+
+
+
+/**
+ * Compresses the selected images and adds them to the modal task attachments.
+ * @async
+ * @param {HTMLInputElement} input - The file input.
+ * @returns {Promise<void>}
+ */
+async function handleModalAttachmentSelect(input) {
+    const { added, errors } = await filesToAttachments(input.files, modalAttachments);
+    modalAttachments = modalAttachments.concat(added);
+    input.value = '';
+    renderModalAttachments();
+    if (errors.length) showTaskNotification(errors.join(' '), true);
+}
+
+
+/**
+ * Removes a modal attachment by index.
+ * @param {number} index - Attachment index.
+ * @returns {void}
+ */
+function removeModalAttachment(index) {
+    modalAttachments.splice(index, 1);
+    renderModalAttachments();
+}
+
+
+/**
+ * Renders the attachment thumbnails inside the add-task modal.
+ * @returns {void}
+ */
+function renderModalAttachments() {
+    const list = document.getElementById('modal-attachment-list');
+    if (list) list.innerHTML = attachmentThumbsHTML(modalAttachments, 'removeModalAttachment');
 }

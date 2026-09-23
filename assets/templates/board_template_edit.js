@@ -10,6 +10,7 @@ function editTaskTemplate(task) {
         + buildEditPrioField(prioButtons)
         + buildEditAssignField()
         + buildEditSubtaskField()
+        + buildEditAttachmentField()
         + buildEditSaveButton(task.id);
 }
 
@@ -118,6 +119,26 @@ function buildEditSubtaskField() {
                 <button type="button" class="edit-subtask-add-btn" onclick="addEditSubtask()">&#43;</button>
             </div>
             <ul class="edit-subtask-list" id="edit-subtask-list"></ul>
+        </div>`;
+}
+
+
+/**
+ * Returns the attachment upload field and thumbnail list for the edit form.
+ * Also closes the edit-box wrapper opened in buildEditBasicFields.
+ * @returns {string} HTML string.
+ */
+function buildEditAttachmentField() {
+    return `
+        <div class="edit-form-group">
+            <label class="edit-label" for="edit-attachments">Attachments</label>
+            <label class="attachment-drop" for="edit-attachments">
+                <span>&#128206; Add images</span>
+                <span class="attachment-hint">JPG/PNG, max. 1 MB per task</span>
+            </label>
+            <input type="file" id="edit-attachments" accept="image/jpeg,image/png" multiple hidden
+                onchange="handleEditAttachmentSelect(this)">
+            <div class="attachment-list" id="edit-attachment-list"></div>
         </div></div>`;
 }
 
@@ -154,7 +175,7 @@ function renderEditAssignOptionsHTML(boardContacts, editAssignedIds) {
                     onclick="toggleEditPerson('${c.id}'); event.stopPropagation();"
                     onkeydown="if(event.key==='Enter' || event.key===' '){event.preventDefault(); toggleEditPerson('${c.id}');}">
                     <span class="assign-option-left">
-                        <span class="card-avatar" style="background:${c.color}">${c.initials}</span>
+                        <span class="card-avatar" style="background:${c.color}">${avatarInnerHTML(c)}</span>
                         <span class="assign-option-name">${escapeHtml(c.name)}</span>
                     </span>
                     <span class="assign-checkbox" aria-hidden="true">${selected ? '&#x2611;' : '&#x2610;'}</span>
@@ -173,7 +194,7 @@ function renderEditAssignedAvatarsHTML(boardContacts, editAssignedIds) {
     const selected = boardContacts.filter(c => editAssignedIds.includes(String(c.id)));
     const max = 5;
     const visible = selected.slice(0, max);
-    let html = visible.map(c => `<span class="card-avatar" style="background:${c.color}" title="${escapeHtml(c.name)}">${c.initials}</span>`).join('');
+    let html = visible.map(c => `<span class="card-avatar" style="background:${c.color}" title="${escapeHtml(c.name)}">${avatarInnerHTML(c)}</span>`).join('');
     if (selected.length > max) html += `<span class="card-avatar card-avatar-more" title="${selected.length - max} more">+${selected.length - max}</span>`;
     return html;
 }

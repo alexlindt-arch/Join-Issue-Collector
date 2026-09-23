@@ -7,6 +7,7 @@ let selectedCategory = '';
 let assignedIds = [];
 let subtasks = [];
 let addTaskContacts = [];
+let attachments = [];
 
 
 document.addEventListener('DOMContentLoaded', initTaskPage);
@@ -124,6 +125,7 @@ function collectTask() {
         priority: selectedPriority,
         assignedTo: getAssignedContacts(),
         subtasks: subtasks,
+        attachments: attachments,
         status: 'todo'
     };
 }
@@ -275,7 +277,9 @@ function clearTaskForm() {
     document.getElementById('task-form').reset();
     subtasks = [];
     assignedIds = [];
+    attachments = [];
     selectedCategory = '';
+    renderAttachments();
     resetCategoryLabel();
     renderSubtasks();
     renderAssignedAvatars();
@@ -379,4 +383,40 @@ function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+}
+
+
+/**
+ * Compresses the selected images and adds them to the task attachments.
+ * @async
+ * @param {HTMLInputElement} input - The file input.
+ * @returns {Promise<void>}
+ */
+async function handleAttachmentSelect(input) {
+    const { added, errors } = await filesToAttachments(input.files, attachments);
+    attachments = attachments.concat(added);
+    input.value = '';
+    renderAttachments();
+    if (errors.length) showTaskNotification(errors.join(' '), true);
+}
+
+
+/**
+ * Removes an attachment by index.
+ * @param {number} index - Attachment index.
+ * @returns {void}
+ */
+function removeAttachment(index) {
+    attachments.splice(index, 1);
+    renderAttachments();
+}
+
+
+/**
+ * Renders the attachment thumbnails below the upload field.
+ * @returns {void}
+ */
+function renderAttachments() {
+    const list = document.getElementById('attachment-list');
+    if (list) list.innerHTML = attachmentThumbsHTML(attachments, 'removeAttachment');
 }
