@@ -20,7 +20,7 @@ const JOIN_STATUS_WEBHOOK_URL = 'https://alexlindt.app.n8n.cloud/webhook/join-st
  * Leave empty until the mailbox exists; the landing page then shows a hint instead of a mail link.
  * @type {string}
  */
-const JOIN_REQUEST_EMAIL = '';
+const JOIN_REQUEST_EMAIL = 'joinissuecollector.lindt@gmail.com';
 
 
 /**
