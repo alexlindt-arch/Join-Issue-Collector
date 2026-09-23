@@ -35,41 +35,47 @@
             </p>
         </div>
 
-        <!-- Step 1: intro -->
-        <section class="request-intro" id="request-intro">
-            <h1 class="request-title">Welcome</h1>
+        <!-- Default: how to send a request by email -->
+        <section class="request-intro" id="request-intro" aria-labelledby="request-title">
+            <h1 class="request-title" id="request-title">Welcome</h1>
             <div class="request-intro-body">
                 <div class="request-intro-grid">
                     <div class="request-intro-text">
                         <p class="request-lead">Easily create a ticket — no extra steps needed.</p>
-                        <p>On this platform, you can submit feature requests and bug reports through a short form.
-                            Each request lands directly in the triage column of our board, where the team reviews it
-                            and sets a deadline and priority level.</p>
-                        <p>A total of 10 requests can be created per day. After this limit, please get in touch
-                            with the team directly.</p>
+                        <p>Send your feature request or bug report by email to
+                            <a class="request-address js-request-address" href="#">our request mailbox</a>.
+                            Our AI reads the email, turns it into a ticket with title, category, priority and deadline,
+                            and places it in the triage column of our board, where the team reviews it.</p>
+                        <p>You receive a confirmation email as soon as the ticket is on the board, and another one
+                            whenever it moves to a new column. A total of
+                            <span class="js-request-limit">10</span> requests can be created per day.</p>
                     </div>
-                    <img src="../assets/img/stakeholder.png" alt="Woman planning tasks on a Kanban board" class="request-illustration">
+                    <img src="../assets/img/stakeholder.png" alt="Woman planning tasks on a Kanban board"
+                        class="request-illustration">
                 </div>
-                <button type="button" class="request-cta" onclick="showRequestForm()">
+                <a class="request-cta js-request-mail" href="#">
                     Create Email Request
                     <svg width="24" height="24" viewBox="489.5 641 24 24" aria-hidden="true">
                         <path
                             d="M499.05 656.15L507.525 647.675C507.725 647.475 507.962 647.375 508.237 647.375C508.512 647.375 508.75 647.475 508.95 647.675C509.15 647.875 509.25 648.113 509.25 648.388C509.25 648.663 509.15 648.9 508.95 649.1L499.75 658.3C499.55 658.5 499.317 658.6 499.05 658.6C498.783 658.6 498.55 658.5 498.35 658.3L494.05 654C493.85 653.8 493.754 653.562 493.762 653.287C493.771 653.012 493.875 652.775 494.075 652.575C494.275 652.375 494.512 652.275 494.787 652.275C495.062 652.275 495.3 652.375 495.5 652.575L499.05 656.15Z"
                             fill="#FFFFFF" />
                     </svg>
-                </button>
+                </a>
+                <p class="request-mail-missing d-none" id="request-mail-missing">The request mailbox is not set up yet.
+                    Please try again later.</p>
             </div>
         </section>
 
         <!-- Limit reached: replaces the intro once the daily limit is used up -->
-        <section class="request-intro d-none" id="request-limit-reached">
-            <h1 class="request-title">Welcome</h1>
+        <section class="request-intro d-none" id="request-limit-reached" aria-labelledby="request-limit-title">
+            <h1 class="request-title" id="request-limit-title">Welcome</h1>
             <div class="request-intro-grid">
                 <div class="request-intro-text request-limit-text">
-                    <p class="request-limit-banner" role="alert">The daily <span class="request-limit-count">10</span>-request limit has been reached!</p>
-                    <p class="request-limit-info">Need more? No worries — you can still send the team an email, but it
-                        will be reviewed manually instead of landing in the triage column automatically.</p>
-                    <a class="request-cta request-limit-cta" id="request-limit-mail" href="mailto:?subject=Join%20request">
+                    <p class="request-limit-banner" role="alert">The daily <span class="js-request-limit">10</span>-request
+                        limit has been reached!</p>
+                    <p class="request-limit-info">Need more? No worries — you can still send emails, but our team will
+                        review them manually instead of using AI to create tickets.</p>
+                    <a class="request-cta request-limit-cta js-request-mail" href="#">
                         Send an Email
                         <svg width="24" height="24" viewBox="489.5 641 24 24" aria-hidden="true">
                         <path
@@ -78,69 +84,9 @@
                     </svg>
                     </a>
                 </div>
-                <img src="../assets/img/stakeholder_limit.png" alt="Man pointing at a Kanban board" class="request-illustration">
+                <img src="../assets/img/stakeholder_limit.png" alt="Man pointing at a Kanban board"
+                    class="request-illustration">
             </div>
-        </section>
-
-        <!-- Step 2: form -->
-        <section class="request-card d-none" id="request-card">
-            <h2 class="request-card-title">Create Request</h2>
-            <form class="request-form" id="request-form" novalidate onsubmit="submitRequest(event)">
-                <div class="request-row">
-                    <div class="request-group">
-                        <label for="req-name">Name <span class="required">*</span></label>
-                        <input type="text" id="req-name" class="request-input" placeholder="Your name"
-                            autocomplete="name" maxlength="80">
-                    </div>
-                    <div class="request-group">
-                        <label for="req-email">Email <span class="required">*</span></label>
-                        <input type="email" id="req-email" class="request-input" placeholder="name@example.com"
-                            autocomplete="email" maxlength="120">
-                    </div>
-                </div>
-
-                <div class="request-group">
-                    <span class="request-group-label">Type</span>
-                    <div class="request-types">
-                        <label class="request-type"><input type="radio" name="req-type" value="Feature Request"
-                                checked> Feature</label>
-                        <label class="request-type"><input type="radio" name="req-type" value="Bug Report"> Bug</label>
-                    </div>
-                </div>
-
-                <div class="request-group">
-                    <label for="req-title">Title <span class="required">*</span></label>
-                    <input type="text" id="req-title" class="request-input" placeholder="Short and precise"
-                        maxlength="100">
-                </div>
-
-                <div class="request-group">
-                    <label for="req-desc">Description <span class="required">*</span></label>
-                    <textarea id="req-desc" class="request-input request-textarea"
-                        placeholder="What should happen? How can the bug be reproduced?" maxlength="2000"></textarea>
-                </div>
-
-                <p class="request-error" id="request-error" aria-live="polite"></p>
-
-                <div class="request-actions">
-                    <span class="request-hint"><span class="required">*</span> Required field</span>
-                    <button type="submit" class="request-cta" id="req-submit">
-                        Send request
-                        <svg width="24" height="24" viewBox="489.5 641 24 24" aria-hidden="true">
-                            <path
-                                d="M499.05 656.15L507.525 647.675C507.725 647.475 507.962 647.375 508.237 647.375C508.512 647.375 508.75 647.475 508.95 647.675C509.15 647.875 509.25 648.113 509.25 648.388C509.25 648.663 509.15 648.9 508.95 649.1L499.75 658.3C499.55 658.5 499.317 658.6 499.05 658.6C498.783 658.6 498.55 658.5 498.35 658.3L494.05 654C493.85 653.8 493.754 653.562 493.762 653.287C493.771 653.012 493.875 652.775 494.075 652.575C494.275 652.375 494.512 652.275 494.787 652.275C495.062 652.275 495.3 652.375 495.5 652.575L499.05 656.15Z"
-                                fill="#FFFFFF" />
-                        </svg>
-                    </button>
-                </div>
-            </form>
-        </section>
-
-        <!-- Step 3: success -->
-        <section class="request-card request-success d-none" id="request-success">
-            <h2 class="request-card-title">Thank you!</h2>
-            <p class="request-success-text">Your request has been received and will be reviewed in triage.</p>
-            <button type="button" class="request-cta" onclick="resetRequestForm()">Create another request</button>
         </section>
     </main>
 

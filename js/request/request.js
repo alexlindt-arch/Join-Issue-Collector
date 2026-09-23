@@ -1,233 +1,109 @@
-const REQUEST_DAILY_LIMIT = 10;
-const REQUEST_LIMIT_KEY = 'joinRequestLog';
+/** Firebase path where n8n counts the tickets it created from emails, one number per day. */
+const REQUEST_COUNTER_PATH = 'issueCollector/daily';
+
+/** Timezone n8n uses for the daily counter, so the page and the workflow agree on "today". */
+const REQUEST_TIMEZONE = 'Europe/Berlin';
+
+/** Subject and body template that helps stakeholders write a useful request. */
+const REQUEST_MAIL_SUBJECT = 'Feature request: ';
+const REQUEST_MAIL_BODY = [
+    'What should be built or fixed?',
+    '',
+    'Why is it important?',
+    '',
+    'Deadline (if any):'
+].join('\n');
 
 document.addEventListener('DOMContentLoaded', initRequestPage);
 
 
 /**
- * Renders the counter and shows the limit screen when today's limit is used up.
- * @returns {void}
+ * Wires up the mail links, then loads today's usage and switches to the limit screen when needed.
+ * @async
+ * @returns {Promise<void>}
  */
-function initRequestPage() {
-    renderRequestUsage();
-    if (isRequestLimitReached()) showRequestStep('limit');
+async function initRequestPage() {
+    renderMailLinks();
+    const used = await loadTodaysRequestCount();
+    renderRequestUsage(used);
+    if (used >= JOIN_DAILY_REQUEST_LIMIT) showRequestStep('limit');
 }
 
 
 /**
- * Checks whether the daily request limit has been reached.
- * @returns {boolean}
+ * Returns today's date as YYYY-MM-DD in the workflow's timezone.
+ * @returns {string} Date key used by the n8n counter.
  */
-function isRequestLimitReached() {
-    return getTodaysRequestCount() >= REQUEST_DAILY_LIMIT;
+function getTodayKey() {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: REQUEST_TIMEZONE }).format(new Date());
 }
 
 
 /**
- * Shows how many requests were already sent today.
- * @returns {void}
+ * Reads how many tickets n8n already created from emails today.
+ * @async
+ * @returns {Promise<number>} Count for today, 0 when nothing was stored or the request failed.
  */
-function renderRequestUsage() {
-    document.getElementById('request-used').textContent = Math.min(getTodaysRequestCount(), REQUEST_DAILY_LIMIT);
-    document.getElementById('request-limit').textContent = REQUEST_DAILY_LIMIT;
-    document.querySelector('.request-limit-count').textContent = REQUEST_DAILY_LIMIT;
-    document.querySelector('.request-usage').classList.toggle('is-limit', isRequestLimitReached());
-}
-
-
-/**
- * Shows exactly one of the steps: intro, limit, form or success.
- * @param {'intro'|'limit'|'form'|'success'} step
- * @returns {void}
- */
-function showRequestStep(step) {
-    document.getElementById('request-intro').classList.toggle('d-none', step !== 'intro');
-    document.getElementById('request-limit-reached').classList.toggle('d-none', step !== 'limit');
-    document.getElementById('request-card').classList.toggle('d-none', step !== 'form');
-    document.getElementById('request-success').classList.toggle('d-none', step !== 'success');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-
-/**
- * Opens the request form (step 2).
- * @returns {void}
- */
-function showRequestForm() {
-    if (isRequestLimitReached()) return showRequestStep('limit');
-    showRequestStep('form');
-    document.getElementById('req-name').focus();
-}
-
-
-/**
- * Back arrow: returns to the start screen from the form, otherwise to the welcome page.
- * @returns {void}
- */
-function goBack() {
-    const onStart = ['request-intro', 'request-limit-reached']
-        .some(id => !document.getElementById(id).classList.contains('d-none'));
-    if (!onStart) {
-        showRequestStep(isRequestLimitReached() ? 'limit' : 'intro');
-    } else {
-        window.location.href = '../index.html';
-    }
-}
-
-
-/**
- * Reads all form values.
- * @returns {Object} Raw form values.
- */
-function readRequestForm() {
-    return {
-        name: document.getElementById('req-name').value.trim(),
-        email: document.getElementById('req-email').value.trim(),
-        type: document.querySelector('input[name="req-type"]:checked')?.value || 'Feature Request',
-        title: document.getElementById('req-title').value.trim(),
-        description: document.getElementById('req-desc').value.trim()
-    };
-}
-
-
-/**
- * Validates the form values and returns an error message or empty string.
- * @param {Object} values - Values from readRequestForm().
- * @returns {string}
- */
-function validateRequest(values) {
-    if (!values.name || !values.email || !values.title || !values.description) return 'Please fill in all required fields.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(values.email)) return 'Please enter a valid email address.';
-    if (getTodaysRequestCount() >= REQUEST_DAILY_LIMIT) return `You have reached the limit of ${REQUEST_DAILY_LIMIT} requests for today – please try again tomorrow.`;
-    return '';
-}
-
-
-/**
- * Returns how many requests were sent from this browser today.
- * @returns {number}
- */
-function getTodaysRequestCount() {
+async function loadTodaysRequestCount() {
     try {
-        const log = JSON.parse(localStorage.getItem(REQUEST_LIMIT_KEY)) || [];
-        const today = new Date().toISOString().slice(0, 10);
-        return log.filter(d => d === today).length;
-    } catch (e) {
+        const response = await fetch(`${JOIN_DB_URL}/${REQUEST_COUNTER_PATH}/${getTodayKey()}.json`);
+        const count = await response.json();
+        return Number(count) || 0;
+    } catch (error) {
+        console.warn('Request counter could not be loaded:', error);
         return 0;
     }
 }
 
 
 /**
- * Records a sent request for the daily limit.
+ * Shows "X of 10 requests used today" and turns the counter red once the limit is reached.
+ * @param {number} used - Tickets created today.
  * @returns {void}
  */
-function logRequestSent() {
-    try {
-        const today = new Date().toISOString().slice(0, 10);
-        const log = (JSON.parse(localStorage.getItem(REQUEST_LIMIT_KEY)) || []).filter(d => d === today);
-        log.push(today);
-        localStorage.setItem(REQUEST_LIMIT_KEY, JSON.stringify(log));
-    } catch (e) { /* storage unavailable – limit is best effort */ }
+function renderRequestUsage(used) {
+    document.getElementById('request-used').textContent = Math.min(used, JOIN_DAILY_REQUEST_LIMIT);
+    document.getElementById('request-limit').textContent = JOIN_DAILY_REQUEST_LIMIT;
+    document.querySelectorAll('.js-request-limit').forEach(el => { el.textContent = JOIN_DAILY_REQUEST_LIMIT; });
+    document.querySelector('.request-usage').classList.toggle('is-limit', used >= JOIN_DAILY_REQUEST_LIMIT);
 }
 
 
 /**
- * Builds the triage task from the form values.
- * @param {Object} values - Values from readRequestForm().
- * @returns {Object} Task object.
+ * Points all mail buttons and the address link at the request mailbox.
+ * Without a configured mailbox the buttons are hidden and a hint is shown instead.
+ * @returns {void}
  */
-function buildRequestTask(values) {
-    return {
-        title: values.title,
-        description: values.description,
-        category: values.type,
-        priority: values.type === 'Bug Report' ? 'urgent' : 'medium',
-        status: 'triage',
-        dueDate: '',
-        assignedTo: [],
-        subtasks: [],
-        requester: { name: values.name, email: values.email },
-        createdAt: new Date().toISOString()
-    };
-}
-
-
-/**
- * Determines the next free numeric task id.
- * @async
- * @returns {Promise<number>}
- */
-async function getNextRequestTaskId() {
-    const response = await fetch(`${JOIN_DB_URL}/tasks.json`);
-    const data = await response.json();
-    if (!data) return 1;
-    const ids = Object.values(data).filter(Boolean).map(t => Number(t.id) || 0);
-    return (ids.length ? Math.max(...ids) : 0) + 1;
-}
-
-
-/**
- * Saves the task in the Firebase database.
- * @async
- * @param {Object} task - The task to save.
- * @returns {Promise<void>}
- */
-async function saveRequestTask(task) {
-    task.id = await getNextRequestTaskId();
-    const response = await fetch(`${JOIN_DB_URL}/tasks/${task.id}.json`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(task)
+function renderMailLinks() {
+    const address = JOIN_REQUEST_EMAIL;
+    const mailto = `mailto:${address}?subject=${encodeURIComponent(REQUEST_MAIL_SUBJECT)}&body=${encodeURIComponent(REQUEST_MAIL_BODY)}`;
+    document.querySelectorAll('.js-request-mail').forEach(link => {
+        link.href = mailto;
+        link.classList.toggle('d-none', !address);
     });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    document.querySelectorAll('.js-request-address').forEach(link => {
+        link.href = address ? `mailto:${address}` : '#';
+        link.textContent = address || 'our request mailbox';
+    });
+    document.getElementById('request-mail-missing').classList.toggle('d-none', Boolean(address));
 }
 
 
 /**
- * Handles the form submit: validates, saves and shows the success card.
- * @async
- * @param {SubmitEvent} event
- * @returns {Promise<void>}
- */
-async function submitRequest(event) {
-    event.preventDefault();
-    const values = readRequestForm();
-    const error = validateRequest(values);
-    showRequestError(error);
-    if (error) return;
-    const button = document.getElementById('req-submit');
-    button.disabled = true;
-    try {
-        await saveRequestTask(buildRequestTask(values));
-        logRequestSent();
-        renderRequestUsage();
-        showRequestStep('success');
-    } catch (e) {
-        console.error('Error sending request:', e);
-        showRequestError('Sending failed. Please try again later.');
-    } finally {
-        button.disabled = false;
-    }
-}
-
-
-/**
- * Shows or clears the form error message.
- * @param {string} message
+ * Shows either the normal intro or the limit-reached screen.
+ * @param {'intro'|'limit'} step
  * @returns {void}
  */
-function showRequestError(message) {
-    document.getElementById('request-error').textContent = message || '';
+function showRequestStep(step) {
+    document.getElementById('request-intro').classList.toggle('d-none', step !== 'intro');
+    document.getElementById('request-limit-reached').classList.toggle('d-none', step !== 'limit');
 }
 
 
 /**
- * Clears the form so another request can be sent.
+ * Back arrow: returns to the welcome page.
  * @returns {void}
  */
-function resetRequestForm() {
-    document.getElementById('request-form').reset();
-    showRequestError('');
-    showRequestForm();
+function goBack() {
+    window.location.href = '../index.html';
 }
