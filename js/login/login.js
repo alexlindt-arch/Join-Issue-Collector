@@ -241,3 +241,15 @@ function clearAllForms() {
 window.addEventListener('beforeunload', clearAllForms);
 window.addEventListener('popstate', clearAllForms);
 window.addEventListener('pageshow', e => { if (e && e.persisted) clearAllForms(); });
+
+
+/**
+ * Opens the sign-up form directly when the page is called as login.html#signup
+ * (used by the "Sign up" link on the welcome page).
+ * @returns {void}
+ */
+function openSignupFromHash() {
+    if (window.location.hash === '#signup') switchForm('login_section', 'registration_section');
+}
+
+document.addEventListener('DOMContentLoaded', openSignupFromHash);
