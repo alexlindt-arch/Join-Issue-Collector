@@ -51,6 +51,7 @@ function categoryColorClass(category) {
     const c = category.toLowerCase();
     if (c.includes('technical')) return 'category-technical';
     if (c.includes('user')) return 'category-user-story';
+    if (c.includes('feature')) return 'category-feature-request';
     return '';
 }
 
@@ -85,9 +86,11 @@ function taskCardTemplate(task) {
             <span class="task-card-category ${categoryColorClass(task.category)}">${escapeHtml(task.category || '')}</span>
             <div class="task-card-title">${escapeHtml(task.title || '')}</div>
             ${task.description ? `<div class="task-card-desc">${escapeHtml(truncate(task.description, 60))}</div>` : ''}
+            ${task.requester ? `<div class="task-card-requester">von ${escapeHtml(task.requester.name || task.requester.email || '')}</div>` : ''}
             ${progress}
             <div class="task-card-footer">
                 <div class="task-card-avatars">${avatars}</div>
+                ${(task.attachments || []).length ? `<span class="task-card-attachments" title="Attachments">&#128206; ${task.attachments.length}</span>` : ''}
                 <div class="task-card-prio">${prioSvg(task.priority)}</div>
             </div>
         </div>`;
@@ -125,7 +128,7 @@ function buildProgressBar(subtasks, taskId) {
 function buildAvatars(assignedTo) {
     const max = 5;
     const visible = (assignedTo || []).slice(0, max);
-    let html = visible.map(a => `<span class="card-avatar" style="background:${a.color || '#ccc'}">${a.initials || '?'}</span>`).join('');
+    let html = visible.map(a => `<span class="card-avatar" style="background:${a.color || '#ccc'}">${avatarInnerHTML(withContactPhoto(a))}</span>`).join('');
     if ((assignedTo || []).length > max) html += `<span class="card-avatar card-avatar-more">+${(assignedTo || []).length - max}</span>`;
     return html;
 }
@@ -155,7 +158,7 @@ function buildDetailAssignees(assignedTo) {
     const visible = assignedTo.slice(0, max);
     let html = visible.map(a => `
         <div class="detail-assignee">
-            <span class="card-avatar" style="background:${a.color || '#ccc'}">${a.initials || '?'}</span>
+            <span class="card-avatar" style="background:${a.color || '#ccc'}">${avatarInnerHTML(withContactPhoto(a))}</span>
             <span class="detail-assignee-name">${escapeHtml(a.name || '')}</span>
         </div>`).join('');
     if (assignedTo.length > max) {
@@ -199,7 +202,9 @@ function buildDetailHTML(task, prioLabel, assignees, subtaskList) {
         + buildDetailInfo(task, prioLabel)
         + buildDetailAssignSection(task, assignees)
         + buildDetailSubtaskSection(task, subtaskList)
-        + buildDetailActions(task.id);
+        + buildDetailAttachmentSection(task)
+        + '</div>'
+        + buildDetailActions(task);
 }
 
 
@@ -216,7 +221,8 @@ function buildDetailHeader(task) {
         </div>
         <div class="show-detail">
         <h2 class="detail-title">${escapeHtml(task.title || '')}</h2>
-        ${task.description ? `<p class="detail-desc">${escapeHtml(task.description)}</p>` : ''}`;
+        ${task.description ? `<p class="detail-desc">${escapeHtml(task.description)}</p>` : ''}
+        ${buildDetailRequester(task)}`;
 }
 
 
@@ -267,18 +273,23 @@ function buildDetailSubtaskSection(task, subtaskList) {
         <div class="detail-section">
             <span class="detail-label">Subtasks</span>
             <ul class="detail-subtask-list">${subtaskList}</ul>
-        </div></div>`;
+        </div>`;
 }
 
 
 /**
  * Returns the delete and edit action buttons HTML for the detail overlay.
- * @param {string|number} taskId - Task id for button event bindings.
+ * Shows an accept button for triage tasks.
+ * @param {Object} task - Task object with id and status.
  * @returns {string} HTML string.
  */
-function buildDetailActions(taskId) {
+function buildDetailActions(task) {
+    const taskId = task.id;
     return `
         <div class="detail-actions">
+            ${task.status === 'triage' ? `
+            <button class="detail-btn detail-btn--accept" onclick="acceptTriageTask(${taskId})">&#10003; Accept to To do</button>
+            <div class="detail-divider-v"></div>` : ''}
             <button class="detail-btn" onclick="deleteTask(${taskId})">
                 <img src="../assets/icons/delete.svg" alt="Delete"> Delete
             </button>
@@ -287,4 +298,44 @@ function buildDetailActions(taskId) {
                 <img src="../assets/icons/edit.svg" alt="Edit"> Edit
             </button>
         </div>`;
+}
+
+
+/**
+ * Returns the attachments section for the detail view or empty string.
+ * @param {Object} task - Task object with optional attachments array.
+ * @returns {string} HTML string.
+ */
+function buildDetailAttachmentSection(task) {
+    if (!(task.attachments || []).length) return '';
+    return `
+        <div class="detail-section">
+            <span class="detail-label">Attachments</span>
+            <div class="attachment-list">${attachmentThumbsHTML(task.attachments)}</div>
+        </div>`;
+}
+
+
+/**
+ * Returns the requester line for feature requests or empty string.
+ * @param {Object} task - Task object with optional requester.
+ * @returns {string} HTML string.
+ */
+function buildDetailRequester(task) {
+    if (!task.requester) return '';
+    const r = task.requester;
+    const who = [r.name, r.email].filter(Boolean).map(escapeHtml).join(' &middot; ');
+    return `<p class="detail-requester">Feature request von ${who}${task.createdAt ? ` am ${new Date(task.createdAt).toLocaleDateString('de-DE')}` : ''}</p>`;
+}
+
+
+/**
+ * Adds the current photo of the matching board contact to an assignee object.
+ * @param {Object} assignee - Assignee object with id.
+ * @returns {Object} Assignee enriched with photo if one exists.
+ */
+function withContactPhoto(assignee) {
+    const contacts = typeof boardContacts !== 'undefined' ? boardContacts : [];
+    const match = contacts.find(c => String(c.id) === String(assignee.id));
+    return match?.photo ? { ...assignee, photo: match.photo } : assignee;
 }

@@ -42,6 +42,7 @@ function init() {
  * @returns {Promise<void>}
  */
 async function initTasks() {
+    boardContacts = await loadBoardContacts();
     allTasks = await loadBoardTasks();
     displayTasks(allTasks);
 }
@@ -130,15 +131,47 @@ function displayTasks(tasks) {
     tasks.forEach(task => renderTaskCard(task));
     showEmptyPlaceholders();
     addDragHighlightBoxes();
+    updateTriageCount(tasks);
 }
 
 
 /**
- * Empties the inner HTML of all four board columns.
+ * Shows the number of open feature requests next to the triage column title.
+ * @param {Array} tasks - Currently displayed tasks.
+ * @returns {void}
+ */
+function updateTriageCount(tasks) {
+    const badge = document.getElementById('triage-count');
+    if (!badge) return;
+    const count = tasks.filter(t => t.status === 'triage').length;
+    badge.textContent = count;
+    badge.classList.toggle('d-none', count === 0);
+}
+
+
+/**
+ * Moves a triage task (feature request) into the To do column.
+ * @async
+ * @param {number|string} id - Task id.
+ * @returns {Promise<void>}
+ */
+async function acceptTriageTask(id) {
+    const task = allTasks.find(t => t.id == id);
+    if (!task) return;
+    task.status = 'todo';
+    await updateTaskStatus(task);
+    closeOverlay();
+    displayTasks(allTasks);
+    notify('Feature request moved to To do.');
+}
+
+
+/**
+ * Empties the inner HTML of all board columns.
  * @returns {void}
  */
 function clearBoardColumns() {
-    ['todo', 'inProgress', 'awaitFeedback', 'done'].forEach(id => {
+    COLUMN_IDS.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = '';
     });
@@ -191,11 +224,12 @@ function showEmptyPlaceholders() {
 
 
 /**
- * Returns column id / placeholder text pairs for all four board columns.
+ * Returns column id / placeholder text pairs for all board columns.
  * @returns {Array} Array of [id, text] tuples.
  */
 function getEmptyColumnTexts() {
     return Object.entries({
+        triage: 'No feature requests',
         todo: 'No tasks To do',
         inProgress: 'No tasks progress',
         awaitFeedback: 'No tasks feedback',
@@ -219,11 +253,11 @@ function renderEmptyPlaceholder(id, text) {
 
 
 /**
- * Appends a drag-highlight box to each of the four board columns.
+ * Appends a drag-highlight box to each board column.
  * @returns {void}
  */
 function addDragHighlightBoxes() {
-    ['todo', 'inProgress', 'awaitFeedback', 'done'].forEach(id => {
+    COLUMN_IDS.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.insertAdjacentHTML('beforeend', `<div id="drag-hl-${id}" class="drag-highlight-box"></div>`);
     });

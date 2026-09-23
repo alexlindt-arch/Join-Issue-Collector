@@ -2,7 +2,7 @@ let touchDragClone = null;
 let touchDragOffsetX = 0;
 let touchDragOffsetY = 0;
 
-const COLUMN_IDS = ['todo', 'inProgress', 'awaitFeedback', 'done'];
+const COLUMN_IDS = ['triage', 'todo', 'inProgress', 'awaitFeedback', 'done'];
 
 
 /**

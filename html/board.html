@@ -129,6 +129,15 @@
         </div>
 
         <div class="board-columns">
+            <div class="board-col board-col--triage">
+                <div class="board-col-header">
+                    <span>Triage <span class="triage-badge d-none" id="triage-count"></span></span>
+                </div>
+                <div class="board-cards" id="triage" ondrop="moveTo('triage')"
+                    ondragover="allowDrop(event); highlight('triage')" ondragleave="removeHighlight('triage')">
+                </div>
+            </div>
+
             <div class="board-col">
                 <div class="board-col-header">
                     <span>To do</span>
