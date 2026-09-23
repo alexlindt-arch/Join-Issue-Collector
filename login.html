@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="./assets/icons/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="./assets/icons/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="./assets/icons/favicon/site.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./assets/css/login.css" />
+    <title>Login</title>
+</head>
+
+<body class="login-page">
+    <div class="login-logo-animated">
+        <img src="./assets/img/logo_white.svg" class="logo-white" alt="Join Logo">
+        <img src="./assets/img/logo_big.svg" class="logo-dark" alt="Join Logo">
+    </div>
+
+    <div class="login-fullscreen">
+        <div class="login-topbar">
+            <div id="signup_btn">
+                <span>Not a Join user?</span>
+                <button class="btn btn-primary" onclick="switchForm('login_section', 'registration_section')">
+                    Sign up
+                </button>
+            </div>
+        </div>
+        <div class="login-content">
+            <div id="login_section" class="login-card">
+                <h2>Log in</h2>
+                <span class="login-divider"></span>
+
+                <form class="login-form" novalidate onsubmit="login(); return false;">
+                    <div class="input-container">
+                        <input type="email" id="login_email" class="input-field" placeholder="E-Mail"
+                            autocomplete="email" oninput="clearLoginError()">
+                        <img src="./assets/icons/mail.svg" class="input-field-icon" alt="Mail-Icon">
+                    </div>
+                    <div class="input-container">
+                        <input type="password" id="login_passwort" class="input-field" placeholder="Password"
+                            autocomplete="current-password" oninput="clearLoginError()">
+                        <img src="./assets/icons/lock.svg" class="input-field-icon" alt="Lock-Icon">
+                    </div>
+                    <div id="login_error" class="login-error" aria-live="polite"></div>
+                    <div class="login-buttons">
+                        <button type="submit" class="btn btn-primary">Log in</button>
+                        <button type="button" class="btn btn-secondary" onclick="guestLogin()">
+                            Guest Log in
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="registration_section" class="login-card d-none">
+                <div class="login-headline-section">
+                    <img class="login-back-arrow" src="./assets/icons/arrow-left-line.svg" alt="Back-Icon"
+                        onclick="switchForm('registration_section', 'login_section')">
+                    <h2>Sign up</h2>
+                </div>
+                <span class="login-divider"></span>
+
+                <form class="login-form" novalidate onsubmit="register(); return false;">
+                    <div class="input-container">
+                        <input type="text" id="reg_name" class="input-field" placeholder="Name" autocomplete="name"
+                            oninput="validateRegistrationForm()">
+                        <img src="./assets/icons/person.svg" class="input-field-icon" alt="">
+                    </div>
+                    <div class="input-container">
+                        <input type="email" id="reg_email" class="input-field" placeholder="E-Mail" autocomplete="email"
+                            oninput="validateRegistrationForm()"
+                            onblur="markTouched('reg_email'); validateRegistrationForm();">
+                        <img src="./assets/icons/mail.svg" class="input-field-icon" alt="">
+                    </div>
+                    <span id="email_format_hint" class="field-hint">Please enter a valid email address</span>
+                    <div class="input-container">
+                        <input type="password" id="reg_passwort" class="input-field" placeholder="Password"
+                            autocomplete="new-password" oninput="validateRegistrationForm()"
+                            onblur="markTouched('reg_passwort'); validateRegistrationForm();">
+                        <img src="./assets/icons/lock.svg" class="input-field-icon" alt="">
+                    </div>
+                    <span id="pw_hint" class="field-hint"></span>
+                    <div class="input-container">
+                        <input type="password" id="reg_password_confirm" class="input-field"
+                            placeholder="Confirm Password" autocomplete="new-password"
+                            oninput="validateRegistrationForm()"
+                            onblur="markTouched('reg_password_confirm'); validateRegistrationForm();">
+                        <img src="./assets/icons/lock.svg" class="input-field-icon" alt="">
+                    </div>
+                    <span id="pw_match_hint" class="field-hint">Passwords don't match</span>
+                    <div class="login-privacy-row">
+                        <input type="checkbox" id="reg_datenschutz" onchange="validateRegistrationForm()">
+                        <label for="reg_datenschutz">
+                            I accept the
+                            <a href="./html/privacy_policy.html" target="_blank">Privacy Policy</a>
+                        </label>
+                    </div>
+                    <div class="login-buttons">
+                        <button type="submit" id="reg_submit_btn" class="btn btn-primary" disabled>
+                            Sign up
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        <div class="landscape-warning">
+            <p>Please turn your device to portrait mode.</p>
+        </div>
+        <footer class="login-footer">
+            <ul>
+                <li><a href="./html/privacy_policy.html">Privacy Policy</a></li>
+                <li><a href="./html/legal_notice.html">Legal notice</a></li>
+                <li><a href="./html/request.html">Report an issue</a></li>
+            </ul>
+        </footer>
+
+    </div>
+    <div id="notification" class="notification d-none"></div>
+    <script src="./js/config.js"></script>
+    <script src="script.js"></script>
+    <script src="./js/login/login.js"></script>
+    <script src="./js/login/login_auth.js"></script>
+
+</body>
+
+</html>

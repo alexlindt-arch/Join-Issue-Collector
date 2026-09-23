@@ -40,7 +40,8 @@ Daten & Gastmodus
 
 Wichtige Dateien
 ----------------
-- [index.html](index.html) — Landing / Login
+- [index.html](index.html) — Welcome (Rollenwahl: Request oder Login)
+- [login.html](login.html) — Login / Registrierung
 - [html/board.html](html/board.html) — Board-View
 - [js/board.js](js/board.js) — Board-Rendering, Drag & Drop, Merge-Logik
 - [js/add_task.js](js/add_task.js) — Seite zum Erstellen von Tasks

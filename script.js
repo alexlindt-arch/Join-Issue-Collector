@@ -63,7 +63,7 @@ function checkIsGuest() {
  */
 function logout() {
     sessionStorage.removeItem('currentUser');
-    window.location.href = '../index.html';
+    window.location.href = '../login.html';
 }
 
 
@@ -169,7 +169,7 @@ function setActiveNavLink() {
  * @returns {string} HTML string.
  */
 function getGuestDesktopNavHTML() {
-    return `<a href="../index.html" class="nav-link" id="nav_login"><img src="../assets/icons/login.svg" alt="" class="nav-icon"><span>Log In</span></a>`;
+    return `<a href="../login.html" class="nav-link" id="nav_login"><img src="../assets/icons/login.svg" alt="" class="nav-icon"><span>Log In</span></a>`;
 }
 
 
@@ -182,7 +182,7 @@ function getGuestMobileNavHTML(page) {
     const isPrivacy = page === 'privacy_policy.html';
     const isLegal = page === 'legal_notice.html';
     return `
-        <a href="../index.html" class="mobil-nav-link">
+        <a href="../login.html" class="mobil-nav-link">
             <img src="../assets/icons/login.svg" alt="" class="mobil-nav-icon">
             <span>Log In</span>
         </a>
@@ -253,7 +253,7 @@ function notify(message, isError) {
 function redirectIfUnauthorized() {
     const protectedPages = ['summary.html', 'add_task.html', 'board.html', 'contacts.html', 'help.html'];
     if (protectedPages.includes(getCurrentPage()) && !sessionStorage.getItem('currentUser')) {
-        window.location.href = '../index.html';
+        window.location.href = '../login.html';
     }
 }
 

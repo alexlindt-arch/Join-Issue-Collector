@@ -1,0 +1,220 @@
+@import url(./color.css);
+
+:root {
+    --welcome-blue: #177DA8;
+    --welcome-blue-hover: #1A8DBE;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.welcome-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    background: var(--primaryColor);
+    font-family: 'Open Sans', 'Inter', sans-serif;
+    color: var(--primaryColor);
+}
+
+.welcome-page * {
+    font-family: 'Open Sans', 'Inter', sans-serif;
+}
+
+.welcome-main {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+}
+
+.welcome-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 56px;
+    width: 100%;
+    max-width: 789px;
+    padding: 56px 72px;
+    border-radius: 30px;
+    background: var(--white);
+    box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.08);
+}
+
+.welcome-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+}
+
+.welcome-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.welcome-title {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 120%;
+}
+
+.welcome-divider {
+    display: block;
+    width: 120px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--welcome-blue);
+}
+
+.welcome-text {
+    margin: 0;
+    font-size: 23px;
+    line-height: 120%;
+}
+
+.welcome-options {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 64px;
+    width: 100%;
+}
+
+.welcome-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.welcome-option-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 23px;
+    line-height: 120%;
+    white-space: nowrap;
+}
+
+.welcome-icon {
+    flex-shrink: 0;
+}
+
+.welcome-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: inherit;
+    line-height: 120%;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.welcome-btn--primary {
+    min-width: 196px;
+    border: none;
+    background: var(--welcome-blue);
+    color: var(--white);
+    font-size: 23px;
+}
+
+.welcome-btn--primary:hover {
+    background: var(--welcome-blue-hover);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.welcome-btn--secondary {
+    min-width: 165px;
+    padding: 12px 18px;
+    border: 1px solid var(--primaryColor);
+    background: var(--white);
+    color: var(--primaryColor);
+    font-size: 19px;
+}
+
+.welcome-btn--secondary:hover {
+    border-color: var(--welcome-blue);
+    color: var(--welcome-blue);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.welcome-btn:focus-visible,
+.welcome-footer-link:focus-visible {
+    outline: 2px solid var(--welcome-blue-hover);
+    outline-offset: 2px;
+}
+
+.welcome-footer {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 0 16px 40px;
+}
+
+.welcome-page .welcome-footer-link {
+    padding: 8px;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 120%;
+    text-decoration: none;
+}
+
+.welcome-footer-link:hover {
+    color: var(--secondaryColor);
+}
+
+@media (max-width: 860px) {
+    .welcome-card {
+        gap: 40px;
+        padding: 40px 32px;
+    }
+
+    .welcome-options {
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+    }
+
+    .welcome-option {
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-card {
+        padding: 32px 16px;
+        border-radius: 20px;
+    }
+
+    .welcome-title {
+        font-size: 28px;
+    }
+
+    .welcome-text,
+    .welcome-option-label {
+        font-size: 18px;
+    }
+
+    .welcome-option-label {
+        white-space: normal;
+    }
+
+    .welcome-btn--primary {
+        font-size: 19px;
+    }
+}

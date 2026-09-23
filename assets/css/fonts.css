@@ -180,3 +180,12 @@ ul, ol {
     background: var(--primaryColor);
     border-radius: 5px;
 }
+
+/* open-sans-latin (variable 300-800) */
+@font-face {
+  font-display: swap;
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300 800;
+  src: url('../fonts/open-sans-v44-latin-variable.woff2') format('woff2');
+}
