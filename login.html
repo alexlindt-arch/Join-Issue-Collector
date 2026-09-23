@@ -12,6 +12,10 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="./assets/css/login.css" />
     <title>Login</title>
+    <script>
+        // Coming from the welcome page, the logo animation has already played there
+        if (new URLSearchParams(location.search).get('intro') === 'off') document.documentElement.classList.add('no-intro');
+    </script>
 </head>
 
 <body class="login-page">

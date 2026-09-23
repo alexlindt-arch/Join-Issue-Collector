@@ -473,3 +473,11 @@
 #reg_name img {
     margin-top: -6px;
 }
+/* No second intro when coming from the welcome page: jump straight to the end state */
+.no-intro .login-page,
+.no-intro .login-logo-animated,
+.no-intro .login-logo-animated img,
+.no-intro .login-fullscreen {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+}
