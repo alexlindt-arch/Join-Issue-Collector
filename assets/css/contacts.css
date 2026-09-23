@@ -934,19 +934,50 @@ button {
 
 /* ── Tablet: keep the right side inside the screen ── */
 @media (min-width: 769px) and (max-width: 1024px) {
+    /* Compact sizes so the whole contact fits below the header without scrolling */
     .contacts-split-right {
         flex: 1;
         min-width: 0;
+        gap: 24px;
+        margin-top: 24px;
         margin-left: 24px;
     }
 
     .brand-header {
+        gap: 8px;
+        margin-bottom: 0;
         padding-right: 0;
     }
 
+    .brand-title {
+        font-size: 47px;
+    }
+
+    .contact-profile {
+        padding-top: 0;
+    }
+
     .profile-header {
-        flex-wrap: wrap;
-        gap: 16px 24px;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    .profile-avatar {
+        flex-shrink: 0;
+        width: 80px;
+        height: 80px;
+        font-size: 28px;
+    }
+
+    .profile-name {
+        font-size: 36px;
+    }
+
+    .section-title {
+        min-height: 0;
+        margin-bottom: 16px;
+        font-size: 20px;
     }
 
     .profile-meta {
@@ -1259,5 +1290,31 @@ button {
 
     .info-value.email-link {
         color: #007CEE;
+    }
+}
+/* Low laptop screens: tighten the right side so the whole contact stays visible */
+@media (min-width: 1025px) and (max-height: 720px) {
+    .contacts-split-right {
+        gap: 16px;
+        margin-top: 8px;
+    }
+
+    .profile-header {
+        margin-bottom: 16px;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+    }
+
+    .profile-name {
+        font-size: 36px;
+    }
+
+    .section-title {
+        min-height: 0;
+        margin-bottom: 12px;
     }
 }
