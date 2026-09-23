@@ -398,21 +398,42 @@
     }
 
     .request-limit-text {
-        display: flex;
-        order: 0;
-        gap: 32px;
+        display: contents;
+    }
+
+    .request-usage.is-limit {
+        color: #DE3500;
     }
 
     .request-page .request-limit-banner {
-        font-size: 17px;
+        order: 0;
+        width: 100%;
+        min-height: 0;
+        padding: 16px;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    #request-limit-reached .request-illustration {
+        height: 215px;
     }
 
     .request-page .request-limit-info {
-        margin-top: -16px;
+        order: 2;
+        width: 100%;
+        margin-top: 0;
+        color: #42526E;
     }
 
     .request-limit-cta {
+        order: 3;
         align-self: center;
+        margin-top: 24px;
+    }
+
+    .request-page:has(#request-limit-reached:not(.d-none)) .request-footer {
+        padding-bottom: 31px;
     }
 
     .request-footer {
