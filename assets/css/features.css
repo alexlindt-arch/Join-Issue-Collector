@@ -186,12 +186,12 @@
     justify-content: center;
     min-width: 30px;
     height: 28px;
-    padding: 0 10px;
+    padding: 0 7px;
     border-radius: 999px;
     background: var(--category-orange);
     color: #000000;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 21px;
+    font-weight: 800;
     line-height: 1;
     font-variant-numeric: tabular-nums;
     box-sizing: border-box;
