@@ -625,3 +625,14 @@
         }
     }
 }
+
+/* ≤320px: the form (fixed at 280px) sits exactly in the middle of the card */
+@media (max-width: 320px) {
+    .login-card .login-form {
+        width: 100%;
+        max-width: 280px;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+    }
+}
