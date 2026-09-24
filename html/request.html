@@ -125,9 +125,9 @@
             <p class="mail-mask-status" id="mail-mask-status" aria-live="polite">Choose where you want to write the email.
                 The address and the template are filled in for you.</p>
             <div class="mail-mask-actions">
-                <a class="mail-mask-action mail-mask-action--primary" id="mail-mask-gmail" href="#" target="_blank"
+                <a class="mail-mask-action mail-mask-action--primary" id="mail-mask-gmail" href="#" target="_blank" onclick="openMailApp(event, 'gmail')"
                     rel="noopener">Gmail</a>
-                <a class="mail-mask-action" id="mail-mask-outlook" href="#" target="_blank" rel="noopener">Outlook</a>
+                <a class="mail-mask-action" id="mail-mask-outlook" href="#" target="_blank" onclick="openMailApp(event, 'outlook')" rel="noopener">Outlook</a>
                 <a class="mail-mask-action" id="mail-mask-app" href="#">Email app</a>
                 <button type="button" class="mail-mask-action" id="mail-mask-copy" onclick="copyMailRequest()">Copy
                     text</button>

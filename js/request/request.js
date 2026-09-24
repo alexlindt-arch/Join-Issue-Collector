@@ -160,6 +160,93 @@ function openMailMask(event) {
 }
 
 
+/** Android package names of the mail apps the send options try first. */
+const MAIL_APP_PACKAGES = { gmail: 'com.google.android.gm', outlook: 'com.microsoft.office.outlook' };
+
+/** Time an iOS app gets to open before the page falls back to the website. */
+const MAIL_APP_TIMEOUT = 1500;
+
+
+/**
+ * Returns the mobile platform of the device, or 'desktop'.
+ * iPadOS reports itself as a Mac, so a Mac with a touch screen counts as iOS.
+ * @returns {'android'|'ios'|'desktop'}
+ */
+function getMailPlatform() {
+    const agent = navigator.userAgent;
+    if (/Android/i.test(agent)) return 'android';
+    if (/iPhone|iPad|iPod/i.test(agent) || (/Macintosh/i.test(agent) && navigator.maxTouchPoints > 1)) return 'ios';
+    return 'desktop';
+}
+
+
+/**
+ * Builds the iOS link that opens the Gmail or Outlook app with the request template.
+ * @param {'gmail'|'outlook'} app
+ * @param {string} address - Request mailbox.
+ * @returns {string} App URL.
+ */
+function buildIosAppUrl(app, address) {
+    const params = new URLSearchParams({ to: address, subject: REQUEST_MAIL_SUBJECT, body: REQUEST_MAIL_BODY });
+    const query = params.toString().replace(/\+/g, '%20');
+    return app === 'gmail' ? `googlegmail://co?${query}` : `ms-outlook://compose?${query}`;
+}
+
+
+/**
+ * Builds the Android intent that opens the Gmail or Outlook app. Chrome opens the website itself
+ * (browser_fallback_url) when the app is not installed.
+ * @param {'gmail'|'outlook'} app
+ * @param {string} address - Request mailbox.
+ * @param {string} webUrl - Website to open without the app.
+ * @returns {string} Intent URL.
+ */
+function buildAndroidIntentUrl(app, address, webUrl) {
+    const mailto = buildMailtoUrl(address).replace(/^mailto:/, '');
+    return `intent:${mailto}#Intent;scheme=mailto;package=${MAIL_APP_PACKAGES[app]};`
+        + `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
+}
+
+
+/**
+ * Gmail / Outlook button: opens the installed app on phones and tablets, otherwise the website.
+ * Desktop computers have no Gmail app and the Outlook desktop app cannot be addressed from a website,
+ * so there the website opens in a new tab.
+ * @param {MouseEvent} event - Click on the button.
+ * @param {'gmail'|'outlook'} app
+ * @returns {void}
+ */
+function openMailApp(event, app) {
+    const webUrl = app === 'gmail' ? buildGmailUrl(JOIN_REQUEST_EMAIL) : buildOutlookUrl(JOIN_REQUEST_EMAIL);
+    const platform = getMailPlatform();
+    if (platform === 'desktop') return;
+    event.preventDefault();
+    if (platform === 'android') {
+        window.location.href = buildAndroidIntentUrl(app, JOIN_REQUEST_EMAIL, webUrl);
+        return;
+    }
+    openIosAppOrWebsite(buildIosAppUrl(app, JOIN_REQUEST_EMAIL), webUrl);
+}
+
+
+/**
+ * Tries the iOS app and opens the website if the page is still in front afterwards (app not installed).
+ * @param {string} appUrl - App URL.
+ * @param {string} webUrl - Website fallback.
+ * @returns {void}
+ */
+function openIosAppOrWebsite(appUrl, webUrl) {
+    let appOpened = false;
+    const onLeave = () => { appOpened = true; };
+    document.addEventListener('visibilitychange', onLeave, { once: true });
+    window.addEventListener('pagehide', onLeave, { once: true });
+    window.location.href = appUrl;
+    setTimeout(() => {
+        if (!appOpened && document.visibilityState === 'visible') window.location.href = webUrl;
+    }, MAIL_APP_TIMEOUT);
+}
+
+
 /**
  * Copies address and template to the clipboard, for stakeholders who write the email somewhere else.
  * @async
