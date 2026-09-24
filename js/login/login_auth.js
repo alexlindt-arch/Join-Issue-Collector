@@ -16,10 +16,23 @@ function showLoginError(loginErrorEl) {
 /**
  * Stores the authenticated user's basic data in sessionStorage.
  * @param {Object} user - User object with id, name, and email.
+ * @param {string} [photo] - Profile photo of the user's contact, shown in the header.
  * @returns {void}
  */
-function saveUserSession(user) {
-    sessionStorage.setItem('currentUser', JSON.stringify({ id: user.id, name: user.name, email: user.email }));
+function saveUserSession(user, photo = '') {
+    sessionStorage.setItem('currentUser', JSON.stringify({ id: user.id, name: user.name, email: user.email, photo }));
+}
+
+
+/**
+ * Returns the profile photo stored in the contact with the user's email.
+ * @async
+ * @param {string} email - Email of the user.
+ * @returns {Promise<string>} Photo data URL or empty string.
+ */
+async function loadUserPhoto(email) {
+    const entry = await findContactByEmail(email);
+    return entry?.contact?.photo || '';
 }
 
 
@@ -46,7 +59,7 @@ async function login() {
     const user = users.find(u => u.email === email && u.password === password);
     const loginErrorEl = document.getElementById('login_error');
     if (!user) { showLoginError(loginErrorEl); return; }
-    saveUserSession(user);
+    saveUserSession(user, await loadUserPhoto(user.email));
     clearLoginError();
     window.location.href = './html/summary.html';
 }

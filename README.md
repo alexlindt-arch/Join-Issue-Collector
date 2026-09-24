@@ -26,6 +26,7 @@ Features
 - **Stakeholder-Landing-Page** (`html/request.html`): semantisches HTML5, Schriftgrößen ≥ 16 px, Limit-Anzeige.
 - **Summary**: Kachel „Email requests“ zeigt die Anzahl offener Tickets in der Triage.
 - **Kontakt-Avatare**: Foto-Upload (200 px, Base64) statt Initialen – kein Firebase Storage nötig.
+- **Mein Profil** (Avatar-Menü, nur eingeloggt): Name, E-Mail, Telefon und Foto ändern; aktualisiert Benutzerkonto, eigenen Kontakt und Header.
 
 n8n (Ordner [n8n/](n8n))
 ------------------------

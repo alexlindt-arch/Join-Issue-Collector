@@ -9,9 +9,10 @@
     <link rel="shortcut icon" href="../assets/icons/favicon/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/favicon/apple-touch-icon.png" />
     <link rel="manifest" href="../assets/icons/favicon/site.webmanifest" />
-    <link rel="stylesheet" href="../style.css?v=20260924e">
-    <link rel="stylesheet" href="../assets/css/contacts.css?v=20260924e">
-    <link rel="stylesheet" href="../assets/css/features.css?v=20260924e">
+    <link rel="stylesheet" href="../style.css?v=20260924g">
+    <link rel="stylesheet" href="../assets/css/contacts.css?v=20260924g">
+    <link rel="stylesheet" href="../assets/css/features.css?v=20260924g">
+    <link rel="stylesheet" href="../assets/css/profile.css?v=20260924g">
     <title>Contacts</title>
 </head>
 
@@ -29,6 +30,8 @@
                 <div class="avatar-wrapper" id="user-avatar-wrapper" onclick="toggleAvatarMenu()">
                     <div class="user-avatar" id="user-avatar"></div>
                     <div class="avatar-dropdown d-none" id="avatar-menu">
+                        <button class="avatar-menu-btn avatar-menu-btn--profile"
+                            onclick="openProfileDialog(); event.stopPropagation()">My profile</button>
                         <button class="avatar-menu-btn avatar-menu-btn--mobile-only"
                             onclick="window.location.href='help.html'; event.stopPropagation()">Help</button>
                         <button class="avatar-menu-btn"
@@ -144,14 +147,15 @@
 
 
 
-    <script src="../js/config.js?v=20260924e"></script>
-    <script src="../js/image_utils.js?v=20260924e"></script>
-    <script src="../assets/templates/contacts_template.js?v=20260924e"></script>
-    <script src="../js/contacts/contacts.js?v=20260924e"></script>
-    <script src="../js/contacts/contact_add_edit.js?v=20260924e"></script>
-    <script src="../script.js?v=20260924e"></script>
+    <script src="../js/config.js?v=20260924g"></script>
+    <script src="../js/image_utils.js?v=20260924g"></script>
+    <script src="../assets/templates/contacts_template.js?v=20260924g"></script>
+    <script src="../js/contacts/contacts.js?v=20260924g"></script>
+    <script src="../js/contacts/contact_add_edit.js?v=20260924g"></script>
+    <script src="../script.js?v=20260924g"></script>
 
 
+    <script src="../js/profile/profile.js?v=20260924g"></script>
 </body>
 
 </html>
