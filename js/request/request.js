@@ -107,7 +107,7 @@ function buildMailtoUrl(address) {
 
 
 /**
- * Builds a Gmail compose link with the same template, used when no mail app opens.
+ * Builds a Gmail compose link with the same template.
  * @param {string} address - Request mailbox.
  * @returns {string} Gmail compose URL.
  */
@@ -118,71 +118,61 @@ function buildGmailUrl(address) {
 
 
 /**
- * Fills the email mask with the address and the template text.
+ * Builds an Outlook (outlook.com / Microsoft 365 web) compose link with the same template.
+ * @param {string} address - Request mailbox.
+ * @returns {string} Outlook compose URL.
+ */
+function buildOutlookUrl(address) {
+    const params = new URLSearchParams({ to: address, subject: REQUEST_MAIL_SUBJECT, body: REQUEST_MAIL_BODY });
+    return `https://outlook.live.com/mail/0/deeplink/compose?${params.toString().replace(/\+/g, '%20')}`;
+}
+
+
+/**
+ * Fills the email mask with the address, the template text and the links of all send options.
  * @param {string} address - Request mailbox.
  * @returns {void}
  */
 function renderMailMask(address) {
+    const subject = document.querySelector('.js-mail-mask-subject');
+    subject.textContent = REQUEST_MAIL_SUBJECT || 'A short title for your request';
+    subject.classList.toggle('is-placeholder', !REQUEST_MAIL_SUBJECT);
     document.querySelector('.js-mail-mask-to').textContent = address;
-    document.querySelector('.js-mail-mask-subject').textContent = REQUEST_MAIL_SUBJECT;
     document.querySelector('.js-mail-mask-body').textContent = REQUEST_MAIL_BODY;
-    document.getElementById('mail-mask-fallback').href = buildGmailUrl(address);
+    document.getElementById('mail-mask-gmail').href = buildGmailUrl(address);
+    document.getElementById('mail-mask-outlook').href = buildOutlookUrl(address);
+    document.getElementById('mail-mask-app').href = buildMailtoUrl(address);
 }
 
 
-/** Timer that redirects to Gmail when no mail app took over. */
-let mailFallbackTimer = null;
-
-/** Time the mail app gets to open before the page redirects to Gmail. */
-const MAIL_FALLBACK_DELAY = 3000;
-
-
 /**
- * Shows the email mask and opens the mail app. When the page keeps the focus
- * (no mail app installed or registered), the tab is redirected to Gmail in the browser.
+ * Shows the email mask. Nothing opens by itself: the stakeholder picks Gmail, Outlook,
+ * the installed email app or copies the text, because a mail app is not set up on every device.
  * @param {MouseEvent} event - Click on a mail button.
  * @returns {void}
  */
 function openMailMask(event) {
     event.preventDefault();
-    const mask = document.getElementById('mail-mask');
-    mask.classList.remove('d-none');
+    document.getElementById('mail-mask').classList.remove('d-none');
     document.body.classList.add('mail-mask-open');
-    setMailMaskStatus('Opening your email app …');
-    watchMailAppLaunch();
-    window.location.href = buildMailtoUrl(JOIN_REQUEST_EMAIL);
+    setMailMaskStatus('Choose where you want to write the email. The address and the template are filled in for you.');
+    document.getElementById('mail-mask-gmail').focus();
 }
 
 
 /**
- * Starts the fallback timer and cancels it as soon as the mail app takes the focus.
- * @returns {void}
+ * Copies address and template to the clipboard, for stakeholders who write the email somewhere else.
+ * @async
+ * @returns {Promise<void>}
  */
-function watchMailAppLaunch() {
-    clearTimeout(mailFallbackTimer);
-    const onLeave = () => {
-        clearTimeout(mailFallbackTimer);
-        setMailMaskStatus('Your email app is open. Send the email there, then come back here.');
-    };
-    window.addEventListener('blur', onLeave, { once: true });
-    document.addEventListener('visibilitychange', onLeave, { once: true });
-    mailFallbackTimer = setTimeout(() => {
-        window.removeEventListener('blur', onLeave);
-        document.removeEventListener('visibilitychange', onLeave);
-        redirectToGmail();
-    }, MAIL_FALLBACK_DELAY);
-}
-
-
-/**
- * Redirects the tab to Gmail compose, unless the mask was closed in the meantime.
- * @returns {void}
- */
-function redirectToGmail() {
-    if (document.getElementById('mail-mask').classList.contains('d-none')) return;
-    if (document.visibilityState === 'hidden' || !document.hasFocus()) return;
-    setMailMaskStatus('No email app found – redirecting to Gmail …');
-    window.location.href = buildGmailUrl(JOIN_REQUEST_EMAIL);
+async function copyMailRequest() {
+    const text = `To: ${JOIN_REQUEST_EMAIL}\n\n${REQUEST_MAIL_BODY}`;
+    try {
+        await navigator.clipboard.writeText(text);
+        setMailMaskStatus(`Copied! Paste it into a new email to ${JOIN_REQUEST_EMAIL}.`);
+    } catch (error) {
+        setMailMaskStatus(`Copying is blocked here. Please write to ${JOIN_REQUEST_EMAIL}.`);
+    }
 }
 
 
@@ -197,11 +187,10 @@ function setMailMaskStatus(text) {
 
 
 /**
- * Back button in the email mask: hides it and stops the Gmail redirect.
+ * Back button in the email mask: hides it again.
  * @returns {void}
  */
 function closeMailMask() {
-    clearTimeout(mailFallbackTimer);
     document.getElementById('mail-mask').classList.add('d-none');
     document.body.classList.remove('mail-mask-open');
 }

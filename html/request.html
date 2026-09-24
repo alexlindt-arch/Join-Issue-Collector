@@ -116,14 +116,22 @@
             <div class="mail-mask-window-head">
                 <span id="mail-mask-title">New message</span>
             </div>
-            <div class="mail-mask-field"><span>From</span><span class="mail-mask-value">your.email@example.com</span></div>
+            <div class="mail-mask-field"><span>From</span><span class="mail-mask-value">Your email address</span></div>
             <div class="mail-mask-field"><span>To</span><span class="mail-mask-value js-mail-mask-to"></span></div>
             <div class="mail-mask-field"><span>Subject</span><span class="mail-mask-value js-mail-mask-subject"></span></div>
             <div class="mail-mask-body">
                 <p class="js-mail-mask-body"></p><span class="mail-mask-cursor" aria-hidden="true">|</span>
             </div>
-            <p class="mail-mask-status" id="mail-mask-status" aria-live="polite">Opening your email app …</p>
-            <a class="mail-mask-fallback" id="mail-mask-fallback" href="#" target="_blank" rel="noopener">Open in Gmail instead</a>
+            <p class="mail-mask-status" id="mail-mask-status" aria-live="polite">Choose where you want to write the email.
+                The address and the template are filled in for you.</p>
+            <div class="mail-mask-actions">
+                <a class="mail-mask-action mail-mask-action--primary" id="mail-mask-gmail" href="#" target="_blank"
+                    rel="noopener">Gmail</a>
+                <a class="mail-mask-action" id="mail-mask-outlook" href="#" target="_blank" rel="noopener">Outlook</a>
+                <a class="mail-mask-action" id="mail-mask-app" href="#">Email app</a>
+                <button type="button" class="mail-mask-action" id="mail-mask-copy" onclick="copyMailRequest()">Copy
+                    text</button>
+            </div>
         </div>
         <button type="button" class="mail-mask-back" onclick="closeMailMask()">Back</button>
     </div>

@@ -688,3 +688,88 @@
         overflow-wrap: anywhere;
     }
 }
+
+/* Send options in the email mask: nothing opens by itself, the stakeholder picks one */
+.mail-mask-value.is-placeholder {
+    color: #8A8A8A;
+}
+
+.mail-mask-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 16px 24px 24px;
+}
+
+.mail-mask-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 12px 20px;
+    border: 1px solid #2A3647;
+    border-radius: 10px;
+    background: #FFFFFF;
+    color: #2A3647;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.mail-mask-action:hover,
+.mail-mask-action:focus-visible {
+    border-color: #29ABE2;
+    color: #29ABE2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    outline: none;
+}
+
+.mail-mask-action--primary {
+    border-color: #2A3647;
+    background: #2A3647;
+    color: #FFFFFF;
+}
+
+.mail-mask-action--primary:hover,
+.mail-mask-action--primary:focus-visible {
+    border-color: #29ABE2;
+    background: #29ABE2;
+    color: #FFFFFF;
+}
+
+@media (max-width: 600px) {
+    .mail-mask-status {
+        margin-top: 8px;
+    }
+
+    .mail-mask-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 16px 12px 0;
+    }
+}
+
+/* Mobile: the Back button sits below the send options instead of floating over them */
+@media (max-width: 600px) {
+    .mail-mask {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        padding-bottom: 32px;
+    }
+
+    .mail-mask-window {
+        flex-shrink: 0;
+    }
+
+    .mail-mask-back {
+        position: static;
+        align-self: center;
+        margin-top: 24px;
+        transform: none;
+    }
+}

@@ -7,7 +7,7 @@ Ticket in der **Triage**-Spalte an.
 Demo nutzen
 -----------
 1. **Stakeholder**: Startseite `index.html` → „Create request“. Die Landing Page erklärt den Ablauf und nennt die
-   E-Mail-Adresse. „Create Email Request“ öffnet eine vorbereitete Mail.
+   E-Mail-Adresse. „Create Email Request“ zeigt die vorbereitete Mail und lässt wählen: Gmail, Outlook, eigenes Mailprogramm oder Text kopieren.
 2. Innerhalb von ca. 1 Minute liest n8n die Mail, die KI bestimmt Kategorie, Titel, Priorität und Deadline, und das Ticket
    erscheint in der Triage-Spalte. Der Absender bekommt eine Bestätigungsmail.
 3. **Team**: Startseite → „Member login“ (oder Gast-Login) → Board. Im Task-Detail steht der Ersteller mit dem Badge
