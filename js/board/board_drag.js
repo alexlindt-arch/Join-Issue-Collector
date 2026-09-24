@@ -69,10 +69,10 @@ async function moveTo(status) {
  * @returns {Promise<void>}
  */
 async function updateTaskStatus(task) {
-  if (checkIsGuest()) {
-    saveGuestTasks(allTasks);
+  if (isRemoteTask(task)) {
+    await updateTaskStatusRemote(getRemoteTaskId(task), task.status);
   } else {
-    await updateTaskStatusRemote(task.id, task.status);
+    saveGuestTasks(allTasks);
   }
 }
 

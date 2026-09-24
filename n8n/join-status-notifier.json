@@ -2,7 +2,7 @@
   "name": "Join Status Notifier",
   "nodes": [
     {
-      "id": "6b660e17-a0b2-4d26-9181-d2337dac176b",
+      "id": "ef1a8d3d-08c4-42c2-a6d1-885140f98823",
       "name": "Note: Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -17,7 +17,7 @@
       }
     },
     {
-      "id": "e477a5db-cc78-4a9b-9529-a29eb3beaff0",
+      "id": "f978bed3-2123-4276-a016-f4c19687dd97",
       "name": "Status Change Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
@@ -33,10 +33,10 @@
           "allowedOrigins": "*"
         }
       },
-      "webhookId": "eef228e0-2390-4a97-be1b-b558ce3dad20"
+      "webhookId": "c8def870-e658-4651-9b63-49365c3b8126"
     },
     {
-      "id": "0150ed24-e9b1-4b73-9b44-836f5d5a2057",
+      "id": "f21d2bc1-5f64-4aa9-9601-62500ac81230",
       "name": "Validate Payload",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -49,7 +49,7 @@
       }
     },
     {
-      "id": "a0221e51-b55c-4006-a59d-1a1385199f5c",
+      "id": "dfc7285d-017d-492d-b0c1-30cbb4eae406",
       "name": "Load Task",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -71,7 +71,7 @@
       }
     },
     {
-      "id": "9c6200a0-ab04-43b4-a79d-e11bd8a79ea6",
+      "id": "943a0472-b23d-4163-a075-35b34c92b941",
       "name": "Decide Notification",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -84,7 +84,7 @@
       }
     },
     {
-      "id": "0be22c6f-d37b-4311-8c1d-85dccc544848",
+      "id": "dfe4b5dc-0a65-4e6b-bd7e-30769f875da6",
       "name": "Remember Notified Status",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -102,7 +102,7 @@
       }
     },
     {
-      "id": "516ccbc9-24d8-4e1e-bf3d-8b1af06d867b",
+      "id": "5555bdc9-4c81-4dae-b4b8-7ab26398eb8e",
       "name": "Email Creator",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
@@ -182,7 +182,8 @@
   "settings": {
     "executionOrder": "v1",
     "timezone": "Europe/Berlin",
-    "saveManualExecutions": true
+    "saveManualExecutions": true,
+    "errorWorkflow": "Yr1PcsmAEX46gSZ7"
   },
   "active": false,
   "pinData": {}

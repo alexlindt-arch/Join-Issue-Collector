@@ -312,12 +312,13 @@ function buildTaskUpdates(title, task) {
  * @returns {Promise<void>}
  */
 async function saveTaskUpdates(id, updates) {
-  if (checkIsGuest()) {
+  const task = allTasks.find(t => t.id == id);
+  if (task && isRemoteTask(task)) {
+    await updateTaskRemote(getRemoteTaskId(task), updates);
+  } else {
     saveGuestTasks(allTasks);
     closeOverlay();
     displayTasks(allTasks);
-  } else {
-    await updateTaskRemote(id, updates);
   }
 }
 

@@ -1,0 +1,70 @@
+{
+  "name": "Join Error Notifier",
+  "nodes": [
+    {
+      "id": "6870fb09-3fa7-4a8e-a843-ef3f64de331d",
+      "name": "Note: Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -360
+      ],
+      "parameters": {
+        "content": "## Join Error Notifier\nRuns whenever the Issue Collector or the Status Notifier fails and emails the error to the request mailbox. The subject starts with `[Join Error]`, so the collector ignores these mails.",
+        "width": 480,
+        "height": 240
+      }
+    },
+    {
+      "id": "aae9971e-2491-471f-ae33-1825a1b61556",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "620ec972-6cc0-414a-9d3d-3a85ff95abeb",
+      "name": "Email Error",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "sendTo": "joinissuecollector.lindt@gmail.com",
+        "subject": "=[Join Error] {{ $json.workflow.name }} failed",
+        "emailType": "text",
+        "message": "=The workflow \"{{ $json.workflow.name }}\" failed.\n\nNode: {{ $json.execution ? $json.execution.lastNodeExecuted : 'trigger' }}\nError: {{ $json.execution ? $json.execution.error.message : $json.trigger.error.message }}\nExecution: {{ $json.execution ? $json.execution.url : '-' }}\nTime: {{ $now.toFormat('dd.MM.yyyy HH:mm') }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Join Issue Collector"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Email Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Berlin"
+  },
+  "active": false,
+  "pinData": {}
+}

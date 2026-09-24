@@ -7,6 +7,9 @@ let editAssignedIds = [];
 let editSubtasks = [];
 let boardContacts = [];
 
+/** Guests see real email tickets under id = offset + Firebase key, so they never clash with demo task ids. */
+const GUEST_MAIL_ID_OFFSET = 100000;
+
 
 /**
  * Reads guest tasks from sessionStorage.
@@ -23,7 +26,28 @@ function getGuestTasks() {
  * @returns {void}
  */
 function saveGuestTasks(tasks) {
-    sessionStorage.setItem('guestTasks', JSON.stringify(tasks));
+    sessionStorage.setItem('guestTasks', JSON.stringify(tasks.filter(t => !t.remoteId)));
+}
+
+
+/**
+ * Tells whether a task has to be saved in Firebase: always for members,
+ * and for guests when it is a real email ticket.
+ * @param {Object} task - Task to check.
+ * @returns {boolean}
+ */
+function isRemoteTask(task) {
+    return !checkIsGuest() || Boolean(task && task.remoteId);
+}
+
+
+/**
+ * Returns the Firebase key of a task.
+ * @param {Object} task - Task object.
+ * @returns {string|number}
+ */
+function getRemoteTaskId(task) {
+    return task.remoteId || task.id;
 }
 
 
@@ -79,12 +103,32 @@ async function loadRemoteTasks() {
  * @returns {Promise<Array>} Merged task array.
  */
 async function loadGuestTasks() {
+    const mailTickets = await loadMailTicketsForGuest();
     try {
         const fileTasks = await fetchDemoTasks();
-        return mergeWithSessionTasks(fileTasks);
+        return mergeWithSessionTasks(fileTasks).concat(mailTickets);
     } catch (e) {
         console.error('Error loading guest tasks:', e);
-        return getGuestTasks();
+        return getGuestTasks().concat(mailTickets);
+    }
+}
+
+
+/**
+ * Loads the tickets that n8n created from emails, so guests see them on the board too.
+ * @returns {Promise<Array>} Email tickets with a guest id and their Firebase key in remoteId.
+ */
+async function loadMailTicketsForGuest() {
+    try {
+        const response = await fetch(`${BOARD_BASE_URL}/tasks.json`);
+        const data = await response.json();
+        if (!data) return [];
+        return Object.entries(data)
+            .filter(([, t]) => t && t.creator && t.creator.type === 'external')
+            .map(([key, t]) => ({ ...t, id: GUEST_MAIL_ID_OFFSET + Number(key), remoteId: key }));
+    } catch (error) {
+        console.error('Error loading email tickets:', error);
+        return [];
     }
 }
 

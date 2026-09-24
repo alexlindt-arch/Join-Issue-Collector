@@ -4,14 +4,19 @@ const REQUEST_COUNTER_PATH = 'issueCollector/daily';
 /** Timezone n8n uses for the daily counter, so the page and the workflow agree on "today". */
 const REQUEST_TIMEZONE = 'Europe/Berlin';
 
-/** Subject and body template that helps stakeholders write a useful request. */
-const REQUEST_MAIL_SUBJECT = 'Feature request: ';
+/**
+ * Subject and body template that helps stakeholders write a useful request.
+ * The subject stays empty so the stakeholder writes their own title.
+ * The priority line avoids words like "urgent", because n8n treats them as keywords.
+ */
+const REQUEST_MAIL_SUBJECT = '';
 const REQUEST_MAIL_BODY = [
     'What should be built or fixed?',
     '',
-    'Why is it important?',
     '',
-    'Deadline (if any):'
+    'Priority (high, medium or low):',
+    '',
+    'Deadline (if any, e.g. 31.12.2026):'
 ].join('\n');
 
 document.addEventListener('DOMContentLoaded', initRequestPage);

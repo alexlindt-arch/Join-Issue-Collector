@@ -411,3 +411,16 @@
         opacity: 1;
     }
 }
+
+/* Notebook/desktop: the content starts below the logo, like on the login page */
+@media (min-width: 601px) {
+    .welcome-main {
+        padding-top: 176px;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+    .welcome-main {
+        padding-top: 146px;
+    }
+}

@@ -33,6 +33,7 @@ n8n (Ordner [n8n/](n8n))
 | --- | --- | --- |
 | Join Issue Collector | [n8n/join-issue-collector.json](n8n/join-issue-collector.json) | Gmail-Postfach abrufen → Tageslimit prüfen → KI-Analyse (Basic LLM Chain + Structured Output Parser) → Ticket in Firebase anlegen → Antwortmail → Mail in Ordner **erledigt** bzw. bei Fehler/Limit **zu bearbeiten** verschieben |
 | Join Status Notifier | [n8n/join-status-notifier.json](n8n/join-status-notifier.json) | Webhook `POST /webhook/join-status-change` mit `{ taskId }` → Task + Ersteller aus Firebase lesen → Mail an den Ersteller (nur einmal pro neuer Spalte, `lastNotifiedStatus`) |
+| Join Error Notifier | [n8n/join-error-notifier.json](n8n/join-error-notifier.json) | Error Trigger: schlägt einer der beiden Workflows fehl, geht eine Mail mit Workflow, Node und Fehlermeldung ans Anfrage-Postfach (Betreff `[Join Error] …`, wird vom Collector ignoriert) |
 
 - Die Code-Nodes liegen mit JSDoc als eigene Dateien in [n8n/src/](n8n/src); `node n8n/build.js` baut daraus die
   Workflow-JSONs.
@@ -40,13 +41,17 @@ n8n (Ordner [n8n/](n8n))
   sonst der KI-Vorschlag. Deadline: KI-Wert, gegengeprüft mit Datumsangaben im Text.
 - Jede KI-Beschreibung endet mit „🤖 Dieses Ticket wurde KI-generiert.“
 - Tageszähler: Firebase `issueCollector/daily/<YYYY-MM-DD>` (Zeitzone Europe/Berlin).
+- Fehler-Logging: Kann eine Mail nicht in ein Ticket umgewandelt werden, schickt der Collector zusätzlich einen
+  Fehlerbericht (Schritt + Fehlermeldung) ans Anfrage-Postfach; die Mail landet im Ordner **zu bearbeiten**.
+- Gast-Login: Gäste sehen neben den Demo-Tasks auch die echten E-Mail-Tickets aus Firebase (Board und Summary).
 
 ### Einrichtung
 1. Eigenes Gmail-Postfach für Anfragen anlegen und darin die Labels **erledigt** und **zu bearbeiten** erstellen.
-2. In n8n beide JSON-Dateien importieren (oder die bereits angelegten Workflows öffnen).
+2. In n8n alle drei JSON-Dateien importieren (oder die bereits angelegten Workflows öffnen).
 3. Credentials in n8n auswählen: **Gmail OAuth2** (alle Gmail-Nodes) und ein **OpenAI-kompatibles** Modell
    (Node „AI Chat Model“, Modell `gemma4:31b` über Ollama Cloud – austauschbar).
-4. Beide Workflows veröffentlichen/aktivieren.
+4. Collector und Status Notifier veröffentlichen/aktivieren und in deren Einstellungen den Join Error Notifier als
+   Error Workflow wählen.
 5. In [js/config.js](js/config.js) `JOIN_REQUEST_EMAIL` auf die Postfach-Adresse setzen; `JOIN_STATUS_WEBHOOK_URL`
    zeigt auf den Webhook des Status Notifiers.
 

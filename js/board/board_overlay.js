@@ -62,11 +62,12 @@ function openTaskDetail(id) {
  * @returns {Promise<void>}
  */
 async function deleteTask(id) {
+  const task = allTasks.find(t => t.id == id);
   allTasks = allTasks.filter(t => t.id != id);
-  if (checkIsGuest()) {
-    deleteTaskGuest();
+  if (task && isRemoteTask(task)) {
+    await deleteTaskRemote(getRemoteTaskId(task));
   } else {
-    await deleteTaskRemote(id);
+    deleteTaskGuest();
   }
 }
 
@@ -125,10 +126,11 @@ async function toggleSubtask(taskId, subtaskIndex) {
  * @returns {Promise<void>}
  */
 async function saveSubtaskState(taskId, subtasks) {
-  if (checkIsGuest()) {
-    saveGuestTasks(allTasks);
+  const task = allTasks.find(t => t.id == taskId);
+  if (task && isRemoteTask(task)) {
+    await updateSubtasksRemote(getRemoteTaskId(task), subtasks);
   } else {
-    await updateSubtasksRemote(taskId, subtasks);
+    saveGuestTasks(allTasks);
   }
 }
 

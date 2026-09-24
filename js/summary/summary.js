@@ -43,12 +43,31 @@ async function loadTasks() {
  * @returns {Promise<Object[]>} Merged and sorted guest task list.
  */
 async function loadGuestTasks() {
+    const mailTickets = await loadMailTickets();
     try {
         const fileTasks = await safeFetchFileTasks('../demo-task.json');
         const local = JSON.parse(sessionStorage.getItem('guestTasks')) || [];
-        return mergeTasksById(fileTasks || [], local || []);
+        return mergeTasksById(fileTasks || [], local || []).concat(mailTickets);
     } catch (e) {
-        try { return JSON.parse(sessionStorage.getItem('guestTasks')) || []; } catch (e) { return []; }
+        try { return (JSON.parse(sessionStorage.getItem('guestTasks')) || []).concat(mailTickets); } catch (e) { return mailTickets; }
+    }
+}
+
+
+/**
+ * Loads the tickets n8n created from emails, so the guest summary counts them as well.
+ * @async
+ * @returns {Promise<Object[]>} Email tickets from Firebase (empty if unreachable).
+ */
+async function loadMailTickets() {
+    try {
+        const response = await fetch(SUMMARY_TASKS_URL);
+        const data = await response.json();
+        if (!data) return [];
+        return Object.values(data).filter(t => t && t.creator && t.creator.type === 'external');
+    } catch (error) {
+        console.error('Error loading email tickets:', error);
+        return [];
     }
 }
 
