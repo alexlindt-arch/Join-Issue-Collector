@@ -201,26 +201,29 @@
     display: none;
 }
 
-/* Camera button on the edge of the contact photo (like DABubble) */
+/* Camera button next to the contact photo, outside the circle (like DABubble) */
 .profile-placeholder .avatar-upload-hint {
-    right: -2px;
-    bottom: -2px;
-    width: 32px;
-    height: 32px;
-    border: 3px solid var(--white);
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    left: calc(100% + 12px);
+    width: 40px;
+    height: 40px;
+    border: none;
     background: var(--primaryColor);
     color: var(--white);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
+    transform: translateY(-50%);
     transition: background-color 0.15s, transform 0.15s;
 }
 
 .profile-placeholder .avatar-upload-hint svg {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
 }
 
 .profile-placeholder:hover .avatar-upload-hint {
     background: var(--secondaryColor);
-    transform: scale(1.08);
+    transform: translateY(-50%) scale(1.08);
 }
