@@ -588,29 +588,40 @@
     }
 }
 
-/* Mobile footer: one row when all three links fit, otherwise always two rows
-   (Privacy Policy + Legal notice on top, Report an issue centered below) */
+/* Mobile footer: one row when all three links fit, otherwise the three links stay side by side
+   and each label breaks into two lines (Privacy / Policy, Legal / notice, Report an / issue) */
+.login-footer a span {
+    white-space: nowrap;
+}
+
 @media (max-width: 768px) {
     .login-footer {
         container-type: inline-size;
     }
 
     .login-footer ul {
-        display: grid;
-        grid-template-columns: auto auto;
-        justify-content: center;
-        gap: 4px 0;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        gap: 0 8px;
     }
 
-    .login-footer li:last-child {
-        grid-column: 1 / -1;
-        justify-self: center;
+    .login-footer a {
+        height: 100%;
+        box-sizing: border-box;
+        line-height: 1.25;
+        text-align: center;
     }
 
-    @container (min-width: 340px) {
-        .login-footer ul {
-            display: flex;
-            flex-wrap: nowrap;
+    @container (max-width: 339px) {
+        .login-footer a {
+            flex-direction: column;
+            justify-content: center;
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+
+        .login-footer a span {
+            display: block;
         }
     }
 }
