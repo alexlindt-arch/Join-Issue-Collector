@@ -172,3 +172,32 @@
 .category-bug-report {
     background-color: var(--priority-urgent);
 }
+
+/* Triage counter: a round orange pill next to the title (more specific than .board-col-header span) */
+.board-col--triage .board-col-header > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.board-col-header .triage-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #FF8A1F 0%, var(--category-orange) 100%);
+    box-shadow: 0 2px 6px rgba(255, 122, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    box-sizing: border-box;
+}
+
+.board-col-header .triage-badge.d-none {
+    display: none;
+}
