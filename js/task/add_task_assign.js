@@ -27,17 +27,20 @@ async function loadFirebaseContacts() {
 
 /**
  * Loads and normalizes all contacts used in the assignment dropdown.
+ * Guests see the real contacts from Firebase too; the demo file is only the fallback.
  * @async
  * @returns {Promise<Object[]>} Normalized contacts (empty if unreachable).
  */
 async function loadAssignContacts() {
+    const isGuest = typeof checkIsGuest === 'function' && checkIsGuest();
     try {
-        if (typeof checkIsGuest === 'function' && checkIsGuest()) return loadGuestContacts();
-        return loadFirebaseContacts();
+        const contacts = await loadFirebaseContacts();
+        if (contacts.length || !isGuest) return contacts;
     } catch (error) {
         console.error('Error loading contacts:', error);
-        return [];
+        if (!isGuest) return [];
     }
+    return loadGuestContacts();
 }
 
 

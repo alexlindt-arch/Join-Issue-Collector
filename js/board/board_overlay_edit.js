@@ -68,7 +68,8 @@ function handleEditAssignOutsideClick(event) {
  * @returns {Promise<Array>} 
  */
 async function loadBoardContacts() {
-  return checkIsGuest() ? await loadGuestContacts() : await loadRemoteContacts();
+  const contacts = await loadRemoteContacts();
+  return contacts.length || !checkIsGuest() ? contacts : await loadGuestContacts();
 }
 
 

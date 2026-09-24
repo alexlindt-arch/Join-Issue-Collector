@@ -25,23 +25,40 @@ async function init() {
 
 
 /**
- * Loads contacts either from the local guest JSON file or from the
- * remote Firebase database, normalizes them into an array, and
+ * Loads the contacts from Firebase, normalizes them into an array and
  * populates `loadedContacts` via {@link addContactsToLoaded}.
+ * Guests see the same real contacts (including everyone who registered);
+ * the demo file db.json is only used when Firebase cannot be reached.
  * @async
  * @returns {Promise<void>}
  */
 async function loadAndPrepareContacts() {
     try {
-        const isGuest = checkIsGuest();
-        const response = await fetch(isGuest ? '../db.json' : CONTACTS_URL);
-        if (!response.ok) return;
-        const data = await response.json();
-        const raw = isGuest ? data.contacts : data;
+        let raw = await fetchContactsSource(CONTACTS_URL, data => data);
+        if (!raw && checkIsGuest()) raw = await fetchContactsSource('../db.json', data => data.contacts);
         const arr = Object.keys(raw || {}).map(key => ({ ...raw[key], id: key }));
         loadedContacts = [];
         addContactsToLoaded(arr.filter(c => c && c.name));
     } catch (error) { console.error("Fehler beim Laden:", error); }
+}
+
+
+/**
+ * Fetches a contact source and returns its contact collection, or null if it is unreachable or empty.
+ * @async
+ * @param {string} url - Firebase URL or path of the demo file.
+ * @param {function(Object): Object} pick - Picks the contact collection from the response.
+ * @returns {Promise<Object|Array|null>}
+ */
+async function fetchContactsSource(url, pick) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) return null;
+        const data = await response.json();
+        return (data && pick(data)) || null;
+    } catch (error) {
+        return null;
+    }
 }
 
 

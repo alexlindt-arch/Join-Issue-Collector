@@ -14,12 +14,14 @@ let modalDefaultStatus = 'triage';
  * @returns {Promise<Array>} 
  */
 async function loadAssignContacts() {
+    const isGuest = typeof checkIsGuest === 'function' && checkIsGuest();
     try {
-        return (typeof checkIsGuest === 'function' && checkIsGuest())
-            ? await loadGuestAssignContacts()
-            : await loadRemoteAssignContacts();
+        const contacts = await loadRemoteAssignContacts();
+        if (contacts.length || !isGuest) return contacts;
+        return await loadGuestAssignContacts();
     } catch (error) {
         console.error('Error loading contacts:', error);
+        if (isGuest) return loadGuestAssignContacts().catch(() => []);
         showNotification('Error loading contacts!', true);
         return [];
     }
