@@ -243,6 +243,16 @@ function validateField(fieldName) {
 }
 
 
+/** Small camera button on the edge of the avatar that opens the photo selection. */
+const CAMERA_BADGE_HTML = `<span class="avatar-upload-hint" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+        <circle cx="12" cy="13" r="3.5" />
+    </svg>
+</span>`;
+
+
 /**
  * Renders the avatar inside the contact dialog: photo, initials or the default icon.
  * @returns {void}
@@ -254,7 +264,7 @@ function renderDialogAvatar() {
     const inner = person.photo || person.avatar
         ? `<div class="big-avatar" style="background-color: ${person.color || '#ccc'}">${avatarInnerHTML(person)}</div>`
         : '<img class="big-avatar" src="../assets/icons/person.svg" alt="User Icon">';
-    avatarBox.innerHTML = inner + '<span class="avatar-upload-hint" aria-hidden="true">&#128247;</span>';
+    avatarBox.innerHTML = inner + CAMERA_BADGE_HTML;
     document.getElementById('avatar-remove-btn')?.classList.toggle('d-none', !pendingContactPhoto);
 }
 

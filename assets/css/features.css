@@ -200,3 +200,27 @@
 .board-col-header .triage-badge.d-none {
     display: none;
 }
+
+/* Camera button on the edge of the contact photo (like DABubble) */
+.profile-placeholder .avatar-upload-hint {
+    right: -2px;
+    bottom: -2px;
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--white);
+    background: var(--primaryColor);
+    color: var(--white);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    transition: background-color 0.15s, transform 0.15s;
+}
+
+.profile-placeholder .avatar-upload-hint svg {
+    width: 16px;
+    height: 16px;
+}
+
+.profile-placeholder:hover .avatar-upload-hint {
+    background: var(--secondaryColor);
+    transform: scale(1.08);
+}
