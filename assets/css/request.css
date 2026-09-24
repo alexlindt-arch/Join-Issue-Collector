@@ -773,3 +773,61 @@
         transform: none;
     }
 }
+
+/* Logo at the same place and size as on the welcome and login page (inside the 1440px frame);
+   the content starts below it */
+.request-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0;
+}
+
+.request-header a {
+    position: absolute;
+    top: 32px;
+    left: calc(max(0px, (100vw - 1440px) / 2) + 80px);
+}
+
+.request-logo {
+    width: auto;
+    height: 120px;
+}
+
+.request-main {
+    padding-top: 176px;
+}
+
+@media (max-width: 1024px) {
+    .request-header a {
+        left: 40px;
+    }
+
+    .request-logo {
+        height: 90px;
+    }
+
+    .request-main {
+        padding-top: 146px;
+    }
+}
+
+@media (max-width: 600px) {
+    .request-header {
+        padding: 0;
+    }
+
+    .request-header a {
+        top: 45px;
+        left: 41px;
+    }
+
+    .request-logo {
+        width: 64px;
+        height: auto;
+    }
+
+    .request-main {
+        padding-top: 178px;
+    }
+}
