@@ -412,7 +412,7 @@ function withContactPhoto(assignee) {
 }
 
 /** Names longer than this are shortened to first name + initial of the last name. */
-const MAX_FULL_NAME_LENGTH = 15;
+const MAX_FULL_NAME_LENGTH = 12;
 
 
 /**
