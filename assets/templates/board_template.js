@@ -287,7 +287,7 @@ function buildDetailActions(task) {
     return `
         <div class="detail-actions">
             ${task.status === 'triage' ? `
-            <button class="detail-btn detail-btn--accept" onclick="acceptTriageTask(${taskId})">&#10003; Accept to To do</button>
+            <button class="detail-btn detail-btn--accept" onclick="acceptTriageTask(${taskId})"><span class="detail-accept-icon" aria-hidden="true">&#10003;</span><span class="detail-accept-label"><span>Accept to</span> <span>To do</span></span></button>
             <div class="detail-divider-v"></div>` : ''}
             <button class="detail-btn" onclick="deleteTask(${taskId})">
                 <img src="../assets/icons/delete.svg" alt="Delete"> Delete
