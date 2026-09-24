@@ -310,7 +310,7 @@
     position: absolute;
     z-index: 100;
     top: 32px;
-    left: 80px;
+    left: calc(max(0px, (100vw - 1440px) / 2) + 80px);
     animation: welcomeLogoMove 0.8s ease-in-out both;
 }
 
@@ -335,7 +335,7 @@
 
     to {
         top: 32px;
-        left: 80px;
+        left: calc(max(0px, (100vw - 1440px) / 2) + 80px);
         transform: translate(0, 0) scale(1);
     }
 }

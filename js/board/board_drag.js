@@ -127,19 +127,68 @@ function setTouchDragOffset(touch, rect) {
 }
 
 
+/** Hold time before a card starts moving; a quicker swipe scrolls the board instead. */
+const TOUCH_DRAG_DELAY = 350;
+
+/** Finger movement (px) that turns a pending long press into a normal scroll. */
+const TOUCH_SCROLL_TOLERANCE = 10;
+
+/** Start point and timer of a touch that may become a drag. */
+let touchPress = null;
+
+
 /**
- * Initiates a touch drag: records the task ID, offset and creates the clone.
+ * Touch on a card: a long press starts dragging, a swipe keeps scrolling the board.
  * @param {TouchEvent} event
  * @param {number|string} id
  * @returns {void}
  */
 function touchDragStart(event, id) {
-  currentDraggedTaskId = id;
   const card = event.currentTarget;
+  const touch = event.touches[0];
+  cancelTouchPress();
+  touchPress = { x: touch.clientX, y: touch.clientY };
+  touchPress.timer = setTimeout(() => beginTouchDrag(card, id, touch), TOUCH_DRAG_DELAY);
+}
+
+
+/**
+ * Starts dragging the card after the long press: records the task ID, offset and creates the clone.
+ * @param {HTMLElement} card
+ * @param {number|string} id
+ * @param {Touch} touch - Touch at the start of the press.
+ * @returns {void}
+ */
+function beginTouchDrag(card, id, touch) {
+  touchPress = null;
+  currentDraggedTaskId = id;
   const rect = card.getBoundingClientRect();
-  setTouchDragOffset(event.touches[0], rect);
+  setTouchDragOffset(touch, rect);
   createTouchClone(card, rect);
   card.classList.add('card--dragging');
+  if (navigator.vibrate) navigator.vibrate(15);
+}
+
+
+/**
+ * Cancels a long press that has not started dragging yet.
+ * @returns {void}
+ */
+function cancelTouchPress() {
+  if (touchPress) clearTimeout(touchPress.timer);
+  touchPress = null;
+}
+
+
+/**
+ * A finger that moves before the long press is over means scrolling: the drag is not started.
+ * @param {Touch} touch
+ * @returns {void}
+ */
+function cancelPressWhenScrolling(touch) {
+  if (!touchPress || !touch) return;
+  const moved = Math.hypot(touch.clientX - touchPress.x, touch.clientY - touchPress.y);
+  if (moved > TOUCH_SCROLL_TOLERANCE) cancelTouchPress();
 }
 
 
@@ -176,7 +225,10 @@ function moveTouchClone(touch) {
  * @returns {void}
  */
 function touchDragMove(event) {
-  if (!touchDragClone) return;
+  if (!touchDragClone) {
+    cancelPressWhenScrolling(event.touches[0]);
+    return;
+  }
   event.preventDefault();
   const touch = event.touches[0];
   moveTouchClone(touch);
@@ -217,6 +269,7 @@ function updateColumnHighlights(touch) {
  * @returns {void}
  */
 function touchDragEnd(event) {
+  cancelTouchPress();
   if (!touchDragClone) return;
   const touch = event.changedTouches[0];
   cleanupTouchDrag(event.currentTarget);

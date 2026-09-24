@@ -4,6 +4,32 @@ Kanban-Board „Join“ (Vanilla JS + Firebase Realtime Database), erweitert um 
 Stakeholder schicken Feature Requests und Bug-Meldungen per E-Mail, n8n analysiert die Mail per KI und legt automatisch ein
 Ticket in der **Triage**-Spalte an.
 
+**Live-Demo:** https://alexander-lindt.developerakademie.net/Join/
+
+Installation
+------------
+Das Projekt braucht keinen Build-Schritt – nur einen lokalen Webserver, weil die Seiten JSON-Dateien per `fetch` laden.
+
+```bash
+# 1. Repository klonen
+git clone https://github.com/alexlindt-arch/Join-Issue-Collector.git
+cd Join-Issue-Collector
+
+# 2. Lokalen Server starten (eine der Varianten)
+npx serve .                 # Node.js
+python -m http.server 5500  # Python 3
+
+# 3. Im Browser öffnen
+#    http://localhost:5500   (bzw. die Adresse, die npx serve anzeigt)
+```
+
+Alternativ in VS Code die Erweiterung **Live Server** nutzen und `index.html` mit „Open with Live Server“ öffnen.
+
+- **Eigene Datenbank (optional):** In [js/config.js](js/config.js) `JOIN_DB_URL` auf die URL der eigenen
+  Firebase Realtime Database setzen. Ohne Änderung nutzt das Projekt die Demo-Datenbank.
+- **E-Mail-Automatisierung (optional):** Die n8n-Workflows einrichten, siehe [Einrichtung](#einrichtung).
+- **Ohne Konto testen:** Auf der Login-Seite „Guest Log in“ wählen.
+
 Demo nutzen
 -----------
 1. **Stakeholder**: Startseite `index.html` → „Create request“. Die Landing Page erklärt den Ablauf und nennt die

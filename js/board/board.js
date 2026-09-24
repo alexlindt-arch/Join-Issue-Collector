@@ -247,6 +247,7 @@ function attachTouchListenersToCard(card, id) {
         card.addEventListener('touchstart', function (e) { touchDragStart(e, id); }, { passive: true });
         card.addEventListener('touchmove', touchDragMove, { passive: false });
         card.addEventListener('touchend', touchDragEnd, { passive: true });
+        card.addEventListener('touchcancel', () => { cancelTouchPress(); cleanupTouchDrag(card); }, { passive: true });
     } catch (e) {
         card.addEventListener('touchstart', function (e) { touchDragStart(e, id); });
         card.addEventListener('touchmove', touchDragMove);
