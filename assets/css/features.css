@@ -601,11 +601,25 @@
         scrollbar-width: thin;
     }
 
-    .board-columns .board-cards > .task-card,
-    .board-columns .board-cards > .drag-highlight-box {
+    .board-columns .board-cards > .task-card {
         flex: 0 0 min(252px, 78vw);
         max-width: none;
         scroll-snap-align: start;
+    }
+
+    /* The drop placeholder only takes space while a card is dragged over the column,
+       otherwise the row could be scrolled into empty space after the last card */
+    .board-columns .board-cards > .drag-highlight-box {
+        flex: 0 0 0;
+        min-width: 0;
+        margin-left: -16px;
+        border-width: 0;
+    }
+
+    .board-columns .board-cards > .drag-highlight-box.drag-active {
+        flex: 0 0 min(252px, 78vw);
+        margin-left: 0;
+        border-width: 2px;
     }
 
     .board-columns .board-cards > .board-empty {
