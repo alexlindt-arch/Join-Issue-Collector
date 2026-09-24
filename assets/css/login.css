@@ -587,3 +587,30 @@
         outline: none;
     }
 }
+
+/* Mobile footer: one row when all three links fit, otherwise always two rows
+   (Privacy Policy + Legal notice on top, Report an issue centered below) */
+@media (max-width: 768px) {
+    .login-footer {
+        container-type: inline-size;
+    }
+
+    .login-footer ul {
+        display: grid;
+        grid-template-columns: auto auto;
+        justify-content: center;
+        gap: 4px 0;
+    }
+
+    .login-footer li:last-child {
+        grid-column: 1 / -1;
+        justify-self: center;
+    }
+
+    @container (min-width: 340px) {
+        .login-footer ul {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+    }
+}
