@@ -552,3 +552,38 @@
         }
     }
 }
+
+/* Mobile footer: Privacy Policy, Legal notice and Report an issue centered in one row, never broken inside a label */
+@media (max-width: 768px) {
+    .login-footer {
+        display: flex;
+        justify-content: center;
+        padding: 16px 0 24px;
+        box-sizing: border-box;
+    }
+
+    .login-footer ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px 0;
+        max-width: 100%;
+    }
+
+    .login-footer a {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 4px;
+        border-radius: 999px;
+        color: #6B7280;
+        white-space: nowrap;
+        transition: color 0.15s, background-color 0.15s, box-shadow 0.15s;
+    }
+
+    .login-footer a:hover,
+    .login-footer a:focus-visible {
+        background: #FFFFFF;
+        color: var(--secondaryColor);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        outline: none;
+    }
+}
