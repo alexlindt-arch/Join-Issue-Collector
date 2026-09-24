@@ -128,7 +128,11 @@ const collectorNodes = [
     node('Gmail Trigger', 'n8n-nodes-base.gmailTrigger', 1.2, [0, 0], {
         pollTimes: { item: [{ mode: 'everyMinute' }] },
         simple: false,
-        filters: { q: `in:inbox -label:erledigt -label:zu-bearbeiten -subject:"${ERROR_TAG}"` },
+        // Inbox and spam; "Prepare Emails" keeps only those spam mails that use the landing page template
+        filters: {
+            includeSpamTrash: true,
+            q: `{in:inbox in:spam} -in:trash -label:erledigt -label:zu-bearbeiten -subject:"${ERROR_TAG}"`
+        },
         options: {}
     }),
     node('Get Mailbox Labels', 'n8n-nodes-base.gmail', 2.1, [220, 0], {
@@ -207,7 +211,7 @@ const collectorNodes = [
     node('Move: Remove From Inbox', 'n8n-nodes-base.gmail', 2.1, [3620, 40], {
         operation: 'removeLabels',
         messageId: '={{ $json.id }}',
-        labelIds: "={{ ['INBOX'] }}"
+        labelIds: "={{ ['INBOX', 'SPAM'] }}"
     })
 ];
 

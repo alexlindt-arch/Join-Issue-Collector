@@ -2,7 +2,7 @@
   "name": "Join Error Notifier",
   "nodes": [
     {
-      "id": "93c32e66-63de-4a1a-9834-0dd103d377e7",
+      "id": "59438159-dadf-4a77-a5e5-a063d8493f37",
       "name": "Note: Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -17,7 +17,7 @@
       }
     },
     {
-      "id": "264590fb-ffea-4319-aeeb-2501c796259c",
+      "id": "030e72c6-5710-4bb1-824d-f9bd10688eb6",
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
@@ -28,7 +28,7 @@
       "parameters": {}
     },
     {
-      "id": "ddbeb9c0-4d96-4525-babf-da66a3c2300f",
+      "id": "ade4c37d-66ae-4851-b9c6-303e691abbe5",
       "name": "Email Error",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,

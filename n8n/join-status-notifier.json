@@ -2,7 +2,7 @@
   "name": "Join Status Notifier",
   "nodes": [
     {
-      "id": "b9150540-dae9-457a-866c-f120a9bd3f0d",
+      "id": "62b6429d-95ca-431a-bdcd-aaaf7dd9192a",
       "name": "Note: Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -17,7 +17,7 @@
       }
     },
     {
-      "id": "22bc873a-292f-4db8-9836-824d66e0b4b2",
+      "id": "05b01f39-b0cb-4d90-8ec0-8c6e45887b26",
       "name": "Status Change Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
@@ -33,10 +33,10 @@
           "allowedOrigins": "*"
         }
       },
-      "webhookId": "aa077170-14a0-472a-b5e6-b23bd36b008a"
+      "webhookId": "58b38936-9132-4e1c-96aa-e05d9054bce6"
     },
     {
-      "id": "6a38412d-c79e-41f1-814b-a7e3a842002f",
+      "id": "410c107d-3386-4d06-90f6-fcb6ebeb5bf3",
       "name": "Validate Payload",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -49,7 +49,7 @@
       }
     },
     {
-      "id": "173cddf9-5ace-482f-85c9-fa037dabfafb",
+      "id": "f17ff713-e0a5-4bcc-9aaf-fcefd061de6b",
       "name": "Load Task",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -71,7 +71,7 @@
       }
     },
     {
-      "id": "4bcb46bd-e03b-4c8a-a991-7684aa534e8f",
+      "id": "0f6fafa5-b3d0-4ab7-98f4-08a3a459aa77",
       "name": "Decide Notification",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -84,7 +84,7 @@
       }
     },
     {
-      "id": "f4f00aa8-3734-4568-8583-0594f723603d",
+      "id": "eec262bc-18dd-40c7-8914-a606dca4c342",
       "name": "Remember Notified Status",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -102,7 +102,7 @@
       }
     },
     {
-      "id": "e497aed1-7e86-4419-88ef-23d9c8703b66",
+      "id": "aebdf27d-8b1c-4064-8f7c-0b557699c3e5",
       "name": "Email Creator",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,

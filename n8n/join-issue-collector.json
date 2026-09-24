@@ -2,7 +2,7 @@
   "name": "Join Issue Collector",
   "nodes": [
     {
-      "id": "7a5f1d99-3877-4501-95b0-fbfaa6e74373",
+      "id": "4c1b8bff-c9e9-4db2-9d91-5fd225a22d1e",
       "name": "Note: Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -17,7 +17,7 @@
       }
     },
     {
-      "id": "6d392a46-3b67-4092-ad24-799e9a864d87",
+      "id": "244c15a5-9b8e-4b4c-8409-ca945f0d92ef",
       "name": "Gmail Trigger",
       "type": "n8n-nodes-base.gmailTrigger",
       "typeVersion": 1.2,
@@ -35,13 +35,14 @@
         },
         "simple": false,
         "filters": {
-          "q": "in:inbox -label:erledigt -label:zu-bearbeiten -subject:\"[Join Error]\""
+          "includeSpamTrash": true,
+          "q": "{in:inbox in:spam} -in:trash -label:erledigt -label:zu-bearbeiten -subject:\"[Join Error]\""
         },
         "options": {}
       }
     },
     {
-      "id": "5a726172-9938-465e-8bf1-c4bcf3a6a328",
+      "id": "ef7b2012-686f-4371-8cea-b6761984b2b7",
       "name": "Get Mailbox Labels",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
@@ -57,7 +58,7 @@
       "executeOnce": true
     },
     {
-      "id": "43a7d10c-bb9b-4068-bd26-8c4a061ce09f",
+      "id": "959d6e87-05be-4f26-9612-a7b4514151cb",
       "name": "Prepare Emails",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -66,11 +67,11 @@
         0
       ],
       "parameters": {
-        "jsCode": "/**\n * Prepare Emails (runs once for all emails of one poll).\n * Maps every new Gmail message to a plain request object and adds the ids of the two\n * target folders (\"erledigt\" = done, \"zu bearbeiten\" = needs manual review).\n * @returns {Array<{json: Object}>} One item per email.\n * @throws {Error} When one of the two Gmail labels does not exist yet.\n */\nconst DONE_LABEL = 'erledigt';\nconst REVIEW_LABEL = 'zu bearbeiten';\nconst MAX_BODY_LENGTH = 6000;\n\nconst labels = $('Get Mailbox Labels').all().map(item => item.json);\n\n/**\n * Returns the id of a Gmail label by its name (case-insensitive).\n * @param {string} name - Label name as shown in Gmail.\n * @returns {string|undefined} Label id.\n */\nfunction findLabelId(name) {\n    return labels.find(label => String(label.name || '').toLowerCase() === name)?.id;\n}\n\n/**\n * Turns HTML mail content into plain text as a fallback when the mail has no text part.\n * @param {string} html - HTML body.\n * @returns {string} Plain text.\n */\nfunction stripHtml(html) {\n    return String(html || '')\n        .replace(/<(style|script)[\\s\\S]*?<\\/\\1>/gi, ' ')\n        .replace(/<br\\s*\\/?>/gi, '\\n')\n        .replace(/<\\/p>/gi, '\\n')\n        .replace(/<[^>]+>/g, ' ')\n        .replace(/&nbsp;/g, ' ')\n        .replace(/[ \\t]+/g, ' ')\n        .trim();\n}\n\nconst doneLabelId = findLabelId(DONE_LABEL);\nconst reviewLabelId = findLabelId(REVIEW_LABEL);\nif (!doneLabelId || !reviewLabelId) {\n    throw new Error(`Create the Gmail labels \"${DONE_LABEL}\" and \"${REVIEW_LABEL}\" first.`);\n}\n\nconst today = $now.setZone('Europe/Berlin').toFormat('yyyy-MM-dd');\n\nreturn $('Gmail Trigger').all().map(({ json: mail }) => {\n    const sender = mail.from?.value?.[0] || {};\n    const body = (mail.text || stripHtml(mail.html)).trim().slice(0, MAX_BODY_LENGTH);\n    return {\n        json: {\n            messageId: mail.id,\n            senderEmail: String(sender.address || '').toLowerCase(),\n            senderName: sender.name || sender.address || 'Stakeholder',\n            subject: String(mail.subject || '').trim(),\n            body,\n            today,\n            doneLabelId,\n            reviewLabelId\n        }\n    };\n});\n"
+        "jsCode": "/**\n * Prepare Emails (runs once for all emails of one poll).\n * Maps every new Gmail message to a plain request object and adds the ids of the two\n * target folders (\"erledigt\" = done, \"zu bearbeiten\" = needs manual review).\n * The trigger also reads the spam folder: a spam mail is only processed when it contains the\n * landing page template, so requests from the page never get lost while real spam is ignored.\n * @returns {Array<{json: Object}>} One item per email.\n * @throws {Error} When one of the two Gmail labels does not exist yet.\n */\nconst DONE_LABEL = 'erledigt';\nconst REVIEW_LABEL = 'zu bearbeiten';\nconst MAX_BODY_LENGTH = 6000;\nconst TEMPLATE_LINE = 'what should be built or fixed';\n\nconst labels = $('Get Mailbox Labels').all().map(item => item.json);\n\n/**\n * Returns the id of a Gmail label by its name (case-insensitive).\n * @param {string} name - Label name as shown in Gmail.\n * @returns {string|undefined} Label id.\n */\nfunction findLabelId(name) {\n    return labels.find(label => String(label.name || '').toLowerCase() === name)?.id;\n}\n\n/**\n * Turns HTML mail content into plain text as a fallback when the mail has no text part.\n * @param {string} html - HTML body.\n * @returns {string} Plain text.\n */\nfunction stripHtml(html) {\n    return String(html || '')\n        .replace(/<(style|script)[\\s\\S]*?<\\/\\1>/gi, ' ')\n        .replace(/<br\\s*\\/?>/gi, '\\n')\n        .replace(/<\\/p>/gi, '\\n')\n        .replace(/<[^>]+>/g, ' ')\n        .replace(/&nbsp;/g, ' ')\n        .replace(/[ \\t]+/g, ' ')\n        .trim();\n}\n\nconst doneLabelId = findLabelId(DONE_LABEL);\nconst reviewLabelId = findLabelId(REVIEW_LABEL);\nif (!doneLabelId || !reviewLabelId) {\n    throw new Error(`Create the Gmail labels \"${DONE_LABEL}\" and \"${REVIEW_LABEL}\" first.`);\n}\n\n/**\n * Returns the plain text body of a Gmail message.\n * @param {Object} mail - Message from the Gmail Trigger.\n * @returns {string} Body text.\n */\nfunction getBody(mail) {\n    return (mail.text || stripHtml(mail.html)).trim().slice(0, MAX_BODY_LENGTH);\n}\n\n/**\n * Keeps inbox mails and those spam mails that were written with the landing page template.\n * @param {Object} mail - Message from the Gmail Trigger.\n * @returns {boolean} True if the mail should become a ticket.\n */\nfunction isRequest(mail) {\n    const inSpam = (mail.labelIds || []).includes('SPAM');\n    return !inSpam || getBody(mail).toLowerCase().includes(TEMPLATE_LINE);\n}\n\nconst today = $now.setZone('Europe/Berlin').toFormat('yyyy-MM-dd');\n\nreturn $('Gmail Trigger').all().filter(({ json: mail }) => isRequest(mail)).map(({ json: mail }) => {\n    const sender = mail.from?.value?.[0] || {};\n    const body = getBody(mail);\n    return {\n        json: {\n            messageId: mail.id,\n            senderEmail: String(sender.address || '').toLowerCase(),\n            senderName: sender.name || sender.address || 'Stakeholder',\n            subject: String(mail.subject || '').trim(),\n            body,\n            today,\n            doneLabelId,\n            reviewLabelId\n        }\n    };\n});\n"
       }
     },
     {
-      "id": "784d6a05-7768-44b5-b808-7ab901040285",
+      "id": "c363be8c-14b5-4133-84cf-30599427c0c3",
       "name": "Loop Over Emails",
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
@@ -83,7 +84,7 @@
       }
     },
     {
-      "id": "ee250db3-bd25-4d98-8f9e-cc0883e398ca",
+      "id": "e1f7e7aa-cb34-409c-9aa8-3009ccb65527",
       "name": "Load Daily Counter",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -105,7 +106,7 @@
       }
     },
     {
-      "id": "b2379b8e-48e6-4669-94cc-2bf08c4fb9ce",
+      "id": "1ac7b911-bf62-4927-b69e-e90b9f9ab605",
       "name": "Check Daily Limit",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -118,7 +119,7 @@
       }
     },
     {
-      "id": "a8cbb5b4-1655-4864-a1fd-2bad0044b107",
+      "id": "67c5e4cd-2b93-4bd8-ac76-8976c107bb3d",
       "name": "Limit Reached?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
@@ -138,7 +139,7 @@
       }
     },
     {
-      "id": "93d12fe9-512c-4cca-a53b-02023f463725",
+      "id": "ddb43b08-f8bf-4731-b7ab-29caa0cac2b2",
       "name": "Reply: Limit Reached",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
@@ -158,7 +159,7 @@
       }
     },
     {
-      "id": "a2de9ee0-0898-4711-8547-ea740053bde9",
+      "id": "10999e97-1c91-4cc5-9e98-49c22ee4c92c",
       "name": "Analyze Email",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
@@ -182,7 +183,7 @@
       "onError": "continueErrorOutput"
     },
     {
-      "id": "2a154b79-a056-457b-b35a-ae27888cd306",
+      "id": "29ba3cf4-9eb9-48aa-a503-8ffffeaaf218",
       "name": "AI Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
@@ -205,7 +206,7 @@
       }
     },
     {
-      "id": "849ed7c9-a80d-4b75-b144-7d909859fa72",
+      "id": "e14c2a5a-43ec-4429-a3dd-0a91e08d9afb",
       "name": "Ticket Schema",
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
@@ -220,7 +221,7 @@
       }
     },
     {
-      "id": "7bb0be20-1526-409c-9429-1d3bcbbf330b",
+      "id": "47ab60b4-5290-4818-97ed-a5a90d12f718",
       "name": "Build Ticket",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -234,7 +235,7 @@
       "onError": "continueErrorOutput"
     },
     {
-      "id": "c201affa-928c-418e-aeb5-21ab7a98a60f",
+      "id": "79c78e54-3196-4ec9-b4bd-06006e184eb9",
       "name": "Load Task Ids",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -257,7 +258,7 @@
       "onError": "continueErrorOutput"
     },
     {
-      "id": "937f9762-6741-4021-92f1-a00d92909aba",
+      "id": "071570af-9799-4298-b7bc-81ac79d15ef4",
       "name": "Assign Ticket Id",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -270,7 +271,7 @@
       }
     },
     {
-      "id": "cac71c8d-66df-4508-90aa-0f47a9edcaa8",
+      "id": "2256331c-dd54-46e0-80a8-f430ca895782",
       "name": "Save Ticket",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -289,7 +290,7 @@
       "onError": "continueErrorOutput"
     },
     {
-      "id": "a4a050e5-a15a-44be-93dc-ab6bfc700bc5",
+      "id": "1ca0b5d1-50fc-4e97-ac7d-6892741897da",
       "name": "Increment Daily Counter",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
@@ -308,7 +309,7 @@
       "onError": "continueRegularOutput"
     },
     {
-      "id": "694bd833-e98c-4370-b0b7-728fb4dc35d1",
+      "id": "cdb50428-e544-40c7-af1e-c2eb592204a3",
       "name": "Reply: Ticket Created",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
@@ -328,7 +329,7 @@
       }
     },
     {
-      "id": "88267259-fc7d-4851-834e-9e1105d40c7d",
+      "id": "aa39380c-818b-4742-a14b-af3f14f8b3a6",
       "name": "Mark As Done",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -341,7 +342,7 @@
       }
     },
     {
-      "id": "24ebbd54-131a-4065-b6fb-db9a2dd8a221",
+      "id": "9e5bda9b-bec2-4d45-8155-a5836248ddfb",
       "name": "Reply: Processing Failed",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
@@ -361,7 +362,7 @@
       }
     },
     {
-      "id": "7861757f-bb7b-464d-9f72-4aa7fb0d0605",
+      "id": "a468e2fa-0fb7-4e4a-a9f6-383e741a635f",
       "name": "Email Error Report",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
@@ -382,7 +383,7 @@
       "onError": "continueRegularOutput"
     },
     {
-      "id": "015f8bb9-1627-4cd7-aeac-3c8c84a25a3d",
+      "id": "6ec82b5c-3ec2-41d7-a915-f38b9e30f973",
       "name": "Mark For Review",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -395,7 +396,7 @@
       }
     },
     {
-      "id": "4ff2a899-bb40-4eb0-be11-5dc70127080d",
+      "id": "7e7c308a-2dae-4dca-9c2f-3f0b7fd0805b",
       "name": "Move: Add Folder Label",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
@@ -410,7 +411,7 @@
       }
     },
     {
-      "id": "9925519b-164d-4302-90b6-3e81336619e3",
+      "id": "2cc4fded-6613-4444-aed5-5005f8914018",
       "name": "Move: Remove From Inbox",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
@@ -421,7 +422,7 @@
       "parameters": {
         "operation": "removeLabels",
         "messageId": "={{ $json.id }}",
-        "labelIds": "={{ ['INBOX'] }}"
+        "labelIds": "={{ ['INBOX', 'SPAM'] }}"
       }
     }
   ],
