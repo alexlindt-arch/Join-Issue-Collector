@@ -655,3 +655,27 @@
         display: none;
     }
 }
+
+/* Names in tickets: full name when it fits, otherwise "First L." (set by fitNames) */
+.fit-name {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.task-card-requester {
+    display: flex;
+    gap: 4px;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.detail-creator-person .detail-creator-name {
+    flex: 0 1 auto;
+}
+
+.detail-assignee .detail-assignee-name {
+    flex: 0 1 auto;
+}

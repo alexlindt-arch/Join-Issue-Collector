@@ -87,7 +87,7 @@ function taskCardTemplate(task) {
             <span class="task-card-category ${categoryColorClass(task.category)}">${escapeHtml(task.category || '')}</span>
             <div class="task-card-title">${escapeHtml(task.title || '')}</div>
             ${task.description ? `<div class="task-card-desc">${escapeHtml(truncate(task.description, 60))}</div>` : ''}
-            ${getTaskCreator(task)?.type === 'external' ? `<div class="task-card-requester" title="${escapeHtml(getTaskCreator(task).name || getTaskCreator(task).email)}">by ${escapeHtml(shortPersonName(getTaskCreator(task).name || getTaskCreator(task).email))}</div>` : ''}
+            ${getTaskCreator(task)?.type === 'external' ? `<div class="task-card-requester">by ${fitNameHTML('task-card-requester-name', getTaskCreator(task).name || getTaskCreator(task).email)}</div>` : ''}
             ${progress}
             <div class="task-card-footer">
                 <div class="task-card-avatars">${avatars}</div>
@@ -159,7 +159,7 @@ function buildDetailAssignees(assignedTo) {
     let html = visible.map(a => `
         <div class="detail-assignee">
             <span class="card-avatar" style="background:${a.color || '#ccc'}">${avatarInnerHTML(withContactPhoto(a))}</span>
-            <span class="detail-assignee-name" title="${escapeHtml(a.name || '')}">${escapeHtml(shortPersonName(a.name || ''))}</span>
+            ${fitNameHTML('detail-assignee-name', a.name || '')}
         </div>`).join('');
     if (assignedTo.length > max) {
         const more = assignedTo.length - max;
@@ -372,7 +372,7 @@ function buildDetailRequester(task) {
                 </span>
             </div>
             <div class="detail-creator-person">
-                <span class="detail-creator-name" title="${escapeHtml(creator.name || creator.email || '')}">${escapeHtml(shortPersonName(creator.name || creator.email || 'unknown'))}</span>
+                ${fitNameHTML('detail-creator-name', creator.name || creator.email || 'unknown')}
                 ${creator.email ? buildCreatorMailLink(creator.email, task.title) : ''}
             </div>
         </div>`;
@@ -411,20 +411,76 @@ function withContactPhoto(assignee) {
     return match?.photo ? { ...assignee, photo: match.photo } : assignee;
 }
 
-/** Names longer than this are shortened to first name + initial of the last name. */
-const MAX_FULL_NAME_LENGTH = 12;
-
-
 /**
- * Shortens long names to first name and the initial of the last name, e.g. "Julia Weißenberger" → "Julia W.".
- * Short names and single words (like an email address) stay unchanged.
+ * Short form of a name: first name and the initial of the last name, e.g. "Julia Weißenberger" → "Julia W.".
+ * Single words (like an email address) stay unchanged.
  * @param {string} name - Full name.
- * @returns {string} Name to display.
+ * @returns {string} Short name.
  */
 function shortPersonName(name) {
     const full = String(name || '').trim().replace(/\s+/g, ' ');
     const parts = full.split(' ');
-    if (full.length <= MAX_FULL_NAME_LENGTH || parts.length < 2) return full;
+    if (parts.length < 2) return full;
     return `${parts[0]} ${parts[parts.length - 1].charAt(0).toUpperCase()}.`;
 }
 
+
+/**
+ * Returns a name element that shows the full name when it fits and the short form only when it does not
+ * (see fitNames). The full name is always available as tooltip.
+ * @param {string} className - CSS class of the element.
+ * @param {string} name - Full name.
+ * @returns {string} HTML string.
+ */
+function fitNameHTML(className, name) {
+    const full = String(name || '').trim().replace(/\s+/g, ' ');
+    const attrs = `data-full="${escapeHtml(full)}" data-short="${escapeHtml(shortPersonName(full))}" title="${escapeHtml(full)}"`;
+    return `<span class="${className} fit-name" ${attrs}>${escapeHtml(full)}</span>`;
+}
+
+
+/**
+ * Shows every name in full if it fits into its space, otherwise the short form.
+ * Hidden names (no width yet) keep the full name until they are visible.
+ * @param {ParentNode} [root=document]
+ * @returns {void}
+ */
+function fitNames(root = document) {
+    root.querySelectorAll('.fit-name').forEach(el => {
+        if (el.textContent !== el.dataset.full) el.textContent = el.dataset.full;
+        if (el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 1) el.textContent = el.dataset.short;
+    });
+}
+
+
+/** Pending animation frame for fitNames, so many changes cause only one measurement. */
+let fitNamesFrame = 0;
+
+
+/**
+ * Runs fitNames once in the next frame.
+ * @returns {void}
+ */
+function scheduleFitNames() {
+    if (fitNamesFrame) return;
+    fitNamesFrame = requestAnimationFrame(() => {
+        fitNamesFrame = 0;
+        fitNames();
+    });
+}
+
+
+/**
+ * Re-checks the names after the board or a ticket was rendered and whenever the window size changes.
+ * Text changes made by fitNames itself are ignored, so the observer does not loop.
+ * @returns {void}
+ */
+function watchFitNames() {
+    window.addEventListener('resize', scheduleFitNames);
+    new MutationObserver(mutations => {
+        if (mutations.some(m => !(m.target.classList && m.target.classList.contains('fit-name')))) scheduleFitNames();
+    }).observe(document.body, { childList: true, subtree: true });
+    scheduleFitNames();
+}
+
+document.addEventListener('DOMContentLoaded', watchFitNames);
