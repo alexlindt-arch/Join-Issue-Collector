@@ -132,7 +132,7 @@
             <div class="board-col board-col--triage">
                 <div class="board-col-header">
                     <span>Triage <span class="triage-badge d-none" id="triage-count"></span></span>
-                    <button class="col-add-btn" aria-label="Task hinzufügen" onclick="openAddTaskModal('triage')">
+                    <button class="col-add-btn" aria-label="Add task to Triage" onclick="openAddTaskModal('triage')">
                         <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                             <path d="M7.5 1V14" stroke="#2A3647" stroke-width="2" stroke-linecap="round" />
                             <path d="M1 7.5H14" stroke="#2A3647" stroke-width="2" stroke-linecap="round" />
@@ -147,12 +147,6 @@
             <div class="board-col">
                 <div class="board-col-header">
                     <span>To do</span>
-                    <button class="col-add-btn" aria-label="Task hinzufügen" onclick="openAddTaskModal('todo')">
-                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                            <path d="M7.5 1V14" stroke="#2A3647" stroke-width="2" stroke-linecap="round" />
-                            <path d="M1 7.5H14" stroke="#2A3647" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                    </button>
                 </div>
                 <div class="board-cards" id="todo" ondrop="moveTo('todo')"
                     ondragover="allowDrop(event); highlight('todo')" ondragleave="removeHighlight('todo')">
@@ -162,12 +156,6 @@
             <div class="board-col">
                 <div class="board-col-header">
                     <span>In progress</span>
-                    <button class="col-add-btn" aria-label="Task hinzufügen" onclick="openAddTaskModal('inProgress')">
-                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                            <path d="M7.5 1V14" stroke="#2A3647" stroke-width="2" stroke-linecap="round" />
-                            <path d="M1 7.5H14" stroke="#2A3647" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                    </button>
                 </div>
                 <div class="board-cards" id="inProgress" ondrop="moveTo('inProgress')"
                     ondragover="allowDrop(event); highlight('inProgress')" ondragleave="removeHighlight('inProgress')">
@@ -177,13 +165,6 @@
             <div class="board-col">
                 <div class="board-col-header">
                     <span>Await feedback</span>
-                    <button class="col-add-btn" aria-label="Task hinzufügen"
-                        onclick="openAddTaskModal('awaitFeedback')">
-                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                            <path d="M7.5 1V14" stroke="#2A3647" stroke-width="2" stroke-linecap="round" />
-                            <path d="M1 7.5H14" stroke="#2A3647" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                    </button>
                 </div>
                 <div class="board-cards" id="awaitFeedback" ondrop="moveTo('awaitFeedback')"
                     ondragover="allowDrop(event); highlight('awaitFeedback')"

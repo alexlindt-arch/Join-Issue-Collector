@@ -3,6 +3,7 @@
  * Validates the AI analysis and turns it into a Join task for the Triage column.
  * Priority comes from keywords in the email first; the AI value is only the fallback.
  * The deadline is taken from the AI and double-checked against dates written in the email.
+ * To-dos listed in the email become subtasks, so they can be ticked off on the board.
  * @returns {Array<{json: Object}>} The email context plus the finished `task`.
  * @throws {Error} When neither the AI nor the subject provide a usable title.
  */
@@ -16,6 +17,7 @@ const LOW_KEYWORDS = ['nicht dringend', 'not urgent', 'keine eile', 'no rush', '
 const URGENT_KEYWORDS = ['dringend', 'urgent', 'asap', 'sofort', 'umgehend', 'kritisch', 'critical', 'blocker',
     'notfall', 'emergency', 'so schnell wie möglich', 'as soon as possible', 'production down', 'geht nicht mehr'];
 const AI_NOTE = '🤖 Dieses Ticket wurde KI-generiert.';
+const MAX_SUBTASKS = 8;
 
 /**
  * Picks the priority: low keywords win over urgent ones ("nicht dringend" contains "dringend").
@@ -67,6 +69,19 @@ function detectDeadline(aiDate, text) {
     return '';
 }
 
+/**
+ * Turns the to-dos found by the AI into Join subtasks: trimmed, short, without duplicates.
+ * @param {unknown} aiSubtasks - List of to-do texts suggested by the AI.
+ * @returns {Array<{title: string, done: boolean}>} Subtasks, all still open.
+ */
+function buildSubtasks(aiSubtasks) {
+    if (!Array.isArray(aiSubtasks)) return [];
+    const titles = aiSubtasks
+        .map(item => String(item || '').replace(/^\s*(?:[-*•–]|\d+[.)])\s*/, '').replace(/\s+/g, ' ').trim().slice(0, 80))
+        .filter(Boolean);
+    return [...new Set(titles)].slice(0, MAX_SUBTASKS).map(title => ({ title, done: false }));
+}
+
 const text = `${email.subject}\n${email.body}`;
 const title = String(ai.title || email.subject || '').replace(/\s+/g, ' ').trim().slice(0, 60);
 if (!title) throw new Error('The email has neither a usable subject nor content for a title.');
@@ -81,7 +96,7 @@ const task = {
     dueDate: detectDeadline(ai.dueDate, text),
     status: 'triage',
     assignedTo: [],
-    subtasks: [],
+    subtasks: buildSubtasks(ai.subtasks),
     creator: { name: email.senderName, email: email.senderEmail, type: 'external' },
     source: 'email',
     lastNotifiedStatus: 'triage',
