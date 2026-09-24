@@ -55,6 +55,7 @@ async function openProfileDialog() {
     const dialog = getProfileDialog();
     await loadProfileContact(user);
     fillProfileForm(user);
+    lockPageScroll(true);
     dialog.showModal();
     document.getElementById('profile-name').focus();
 }
@@ -70,7 +71,19 @@ function getProfileDialog() {
     document.body.insertAdjacentHTML('beforeend', profileDialogTemplate());
     dialog = document.getElementById('profile-dialog');
     dialog.addEventListener('click', event => { if (event.target === dialog) closeProfileDialog(); });
+    dialog.addEventListener('close', () => lockPageScroll(false));
     return dialog;
+}
+
+
+/**
+ * Stops the page behind the dialog from scrolling while the dialog is open.
+ * @param {boolean} locked - True while the dialog is open.
+ * @returns {void}
+ */
+function lockPageScroll(locked) {
+    document.documentElement.classList.toggle('profile-dialog-open', locked);
+    document.body.classList.toggle('profile-dialog-open', locked);
 }
 
 
@@ -325,6 +338,7 @@ function setProfileSaving(saving) {
  */
 function closeProfileDialog() {
     document.getElementById('profile-dialog')?.close();
+    lockPageScroll(false);
 }
 
 
