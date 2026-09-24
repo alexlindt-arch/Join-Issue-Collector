@@ -54,7 +54,8 @@ function getCurrentUser() {
  */
 function buildInternalCreator() {
     const user = getCurrentUser();
-    return { name: user?.name || 'Unknown', email: user?.email || '', type: 'internal' };
+    const name = user?.isGuest ? 'Guest' : user?.name || 'Unknown';
+    return { name, email: user?.email || '', type: 'internal' };
 }
 
 
