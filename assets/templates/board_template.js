@@ -87,7 +87,7 @@ function taskCardTemplate(task) {
             <span class="task-card-category ${categoryColorClass(task.category)}">${escapeHtml(task.category || '')}</span>
             <div class="task-card-title">${escapeHtml(task.title || '')}</div>
             ${task.description ? `<div class="task-card-desc">${escapeHtml(truncate(task.description, 60))}</div>` : ''}
-            ${getTaskCreator(task)?.type === 'external' ? `<div class="task-card-requester">by ${escapeHtml(getTaskCreator(task).name || getTaskCreator(task).email)}</div>` : ''}
+            ${getTaskCreator(task)?.type === 'external' ? `<div class="task-card-requester" title="${escapeHtml(getTaskCreator(task).name || getTaskCreator(task).email)}">by ${escapeHtml(shortPersonName(getTaskCreator(task).name || getTaskCreator(task).email))}</div>` : ''}
             ${progress}
             <div class="task-card-footer">
                 <div class="task-card-avatars">${avatars}</div>
@@ -159,7 +159,7 @@ function buildDetailAssignees(assignedTo) {
     let html = visible.map(a => `
         <div class="detail-assignee">
             <span class="card-avatar" style="background:${a.color || '#ccc'}">${avatarInnerHTML(withContactPhoto(a))}</span>
-            <span class="detail-assignee-name">${escapeHtml(a.name || '')}</span>
+            <span class="detail-assignee-name" title="${escapeHtml(a.name || '')}">${escapeHtml(shortPersonName(a.name || ''))}</span>
         </div>`).join('');
     if (assignedTo.length > max) {
         const more = assignedTo.length - max;
@@ -372,7 +372,7 @@ function buildDetailRequester(task) {
                 </span>
             </div>
             <div class="detail-creator-person">
-                <span class="detail-creator-name">${escapeHtml(creator.name || creator.email || 'unknown')}</span>
+                <span class="detail-creator-name" title="${escapeHtml(creator.name || creator.email || '')}">${escapeHtml(shortPersonName(creator.name || creator.email || 'unknown'))}</span>
                 ${creator.email ? buildCreatorMailLink(creator.email, task.title) : ''}
             </div>
         </div>`;
@@ -410,3 +410,21 @@ function withContactPhoto(assignee) {
     const match = contacts.find(c => String(c.id) === String(assignee.id));
     return match?.photo ? { ...assignee, photo: match.photo } : assignee;
 }
+
+/** Names longer than this are shortened to first name + initial of the last name. */
+const MAX_FULL_NAME_LENGTH = 15;
+
+
+/**
+ * Shortens long names to first name and the initial of the last name, e.g. "Julia Weißenberger" → "Julia W.".
+ * Short names and single words (like an email address) stay unchanged.
+ * @param {string} name - Full name.
+ * @returns {string} Name to display.
+ */
+function shortPersonName(name) {
+    const full = String(name || '').trim().replace(/\s+/g, ' ');
+    const parts = full.split(' ');
+    if (full.length <= MAX_FULL_NAME_LENGTH || parts.length < 2) return full;
+    return `${parts[0]} ${parts[parts.length - 1].charAt(0).toUpperCase()}.`;
+}
+
