@@ -122,8 +122,13 @@
         white-space: normal;
     }
 
+    /* "Accept to To do" only breaks into two lines when it does not fit in one */
+    .detail-actions .detail-btn--accept {
+        flex: 0 1 auto;
+    }
+
     .detail-accept-label span {
-        display: block;
+        display: inline;
     }
 }
 
@@ -550,7 +555,7 @@
     }
 
     .detail-creator-label {
-        flex-direction: column-reverse;
+        flex-direction: column;
         align-items: flex-start;
         gap: 4px;
     }
@@ -605,5 +610,34 @@
 
     .board-columns .board-cards > .board-empty {
         flex: 1 0 100%;
+    }
+}
+
+/* Mobile task detail actions: right-aligned; "Accept to To do" stays in one line and
+   moves into its own row when the three buttons do not fit next to each other */
+@media (max-width: 600px) {
+    #board-detail-box .detail-actions,
+    #board-detail-box .detail-actions:has(.detail-btn--accept) {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 4px;
+    }
+
+    #board-detail-box .detail-actions .detail-btn {
+        gap: 4px;
+        padding: 8px 6px;
+    }
+
+    #board-detail-box .detail-actions .detail-btn--accept {
+        flex: 0 0 auto;
+    }
+
+    #board-detail-box .detail-accept-label span {
+        display: inline;
+        white-space: nowrap;
+    }
+
+    #board-detail-box .detail-actions:has(.detail-btn--accept) .detail-divider-v {
+        display: none;
     }
 }
