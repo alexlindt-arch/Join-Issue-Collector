@@ -481,3 +481,74 @@
     animation-duration: 0s !important;
     animation-delay: 0s !important;
 }
+
+/* Logo ends at exactly the same place as on the welcome page (see welcome.css) */
+@media (max-width: 1024px) {
+    .login-logo-animated {
+        top: 32px;
+        left: 40px;
+        animation-name: loginLogoMoveTablet;
+    }
+
+    .login-logo-animated img,
+    .login-logo-animated .logo-dark {
+        width: auto;
+        height: 90px;
+        margin: 0;
+    }
+
+    @keyframes loginLogoMoveTablet {
+        from {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(2);
+        }
+
+        to {
+            top: 32px;
+            left: 40px;
+            transform: translate(0, 0) scale(1);
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .login-logo-animated {
+        top: 45px;
+        left: 41px;
+        animation-name: loginLogoMoveMobile;
+    }
+
+    .login-logo-animated img,
+    .login-logo-animated .logo-dark {
+        width: 64px;
+        height: auto;
+    }
+
+    /* login and sign-up card always start 24px below the logo */
+    .login-fullscreen {
+        justify-content: flex-start;
+        height: auto;
+        min-height: 100vh;
+        padding-top: 147px;
+        box-sizing: border-box;
+    }
+
+    .login-content {
+        margin-top: 0;
+    }
+
+    @keyframes loginLogoMoveMobile {
+        from {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(2);
+        }
+
+        to {
+            top: 45px;
+            left: 41px;
+            transform: translate(0, 0) scale(1);
+        }
+    }
+}
